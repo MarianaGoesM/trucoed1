@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import model.Baralho;
-import model.Carta;
-import model.Jogador;
-import model.Partida;
+import model.*;
 
 public class ControlPartida {
 
@@ -27,40 +24,34 @@ public class ControlPartida {
 		partida.addTurno(ct.getTurno());
 	}
 
-	public void distribuiCartas(Set<Jogador> j, Baralho b) {
-		embaralhar(b);
 
-		for (int i = 0; i < 3; i++) {
-			for (Jogador jo : j) {
-				jo.addCarta(b.getCartas().remove(0));
-			}
-			partida.setManilha(b.getCartas().remove(0));
 
-		}
+    public void distribuiCartas(Set<Jogador> j, Baralho b) {
+        embaralhar(b);
 
-		/*
-		 * for (Jogador jo : j){ System.out.println(jo.getNome());
-		 * 
-		 * for (Carta c : jo.getMao()){ System.out.println(c.getValor() + " de " +
-		 * c.getNaipe()); } }
-		 */
-	}
+        for (int i = 0; i < 3; i++) {
+            for (Jogador jo : j) {
+                jo.addCarta(b.getCartas().pop());
+            }
+        }
 
-	public void embaralhar(Baralho b) {
-		List<Carta> cartas = b.getCartas();
-		Random gerador = new Random();
-		Carta aux;
-		int indice;
+        partida.setManilha(b.getCartas().pop());
+    }
 
-		for (int j = 0; j < 50; j++) {
-			for (int i = 0; i < cartas.size(); i++) {
-				indice = gerador.nextInt(cartas.size());
-				aux = cartas.get(indice);
-				cartas.set(indice, cartas.get(i));
-				cartas.set(i, aux);
-			}
-		}
-	}
+    public void embaralhar(Baralho b) {
+        Pilha<Carta> pilhaCartas = b.getCartas();
+        List<Carta> listaParaEmbaralhar = new java.util.ArrayList<>();
+
+        while (!pilhaCartas.isEmpty()) {
+            listaParaEmbaralhar.add(pilhaCartas.pop());
+        }
+
+        java.util.Collections.shuffle(listaParaEmbaralhar);
+
+        for (Carta c : listaParaEmbaralhar) {
+            pilhaCartas.push(c);
+        }
+    }
 
 	public int verificarVencedorTurno(Carta cartaJogador, Carta cartaPc, Carta manilha) {
 		int valorManilha = 0;

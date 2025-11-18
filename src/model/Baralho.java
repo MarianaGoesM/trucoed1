@@ -7,32 +7,29 @@ import enumerated.Naipe;
 import enumerated.Valor;
 
 public class Baralho {
-	private List<Carta> cartas;
+	private Pilha<Carta> cartas;
 	private boolean tipo;
 	
 	public Baralho(){
-		this.cartas = new ArrayList<Carta>();
+		this.cartas = new Pilha<Carta>(40); //baralho sem 8,9 e 10
 	}
 	
 	public void addCarta(Carta c){
-		this.cartas.add(c);
+		this.cartas.push(c);
 	}
 	
-	public Carta removeCarta(Naipe n, Valor v){
-		
-		for (Carta card : cartas){
-			if (card.getNaipe().equals(n) && card.getValor().equals(v)){
-				cartas.remove(card);
-				return card;
-			}
-		}
-		
-		return null;
+	public Carta ComprarCarta(){
+		if(this.cartas.isEmpty()){
+            return null;
+        }
+		else{
+            return this.cartas.pop();
+        }
 	}
-	public List<Carta> getCartas() {
+	public Pilha<Carta> getCartas() {
 		return cartas;
 	}
-	public void setCartas(List<Carta> cartas) {
+	public void setCartas(Pilha<Carta> cartas) {
 		this.cartas = cartas;
 	}
 	public boolean isTipo() {
