@@ -1,10 +1,10 @@
 package model;
 
-public class Pessoa extends Jogador {
+public class Pessoa extends Jogador<Carta> {
 	
 	
-	public Pessoa(String nome) {
-		super(nome);
+	public Pessoa(String nome, int time) {
+		super(nome, time);
 	}
 
 	@Override

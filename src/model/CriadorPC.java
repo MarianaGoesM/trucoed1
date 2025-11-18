@@ -1,10 +1,11 @@
 package model;
 
-public class CriadorPC extends FactoryJogador{
+	public class CriadorPC extends FactoryJogador<PC>{
 
-	@Override
-	public Jogador novo() {
-		return new PC("Computador" + (PC.getId() + 1));
-	}
+        @Override
+        public PC novo(String nome, int time) {
+            return new PC("Computador" + (PC.getId()), time);
+        }
+    }
 	
-}
+

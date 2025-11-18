@@ -1,9 +1,9 @@
 package model;
 
-public class CriadorPessoa extends FactoryJogador{
+public class CriadorPessoa extends FactoryJogador<Pessoa>{
 	
 	@Override
-	public Jogador novo(){
-		return new Pessoa("");
-	}
+    public Pessoa novo(String nome, int time){
+        return new Pessoa(nome, time);
+    }
 }

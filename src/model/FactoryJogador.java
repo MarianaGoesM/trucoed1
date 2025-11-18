@@ -1,5 +1,5 @@
 package model;
 
-public abstract class FactoryJogador {
-	public abstract Jogador novo();
+public abstract class FactoryJogador<T extends Jogador<Carta>> {
+    public abstract T novo(String nome, int time);
 }

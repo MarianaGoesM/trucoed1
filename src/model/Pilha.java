@@ -17,12 +17,14 @@ public class Pilha <T> {
         elementos[++topo] = elemento;
     }
 
+    // Pilha.java (pop)
     public T pop() {
         if (isEmpty()){
-            throw new RuntimeException("Pilha vazia");
+            throw new RuntimeException("Pilha vazia"); // Lançada na 2ª puxada
         }
         T elemento = elementos[topo];
-        elementos[topo--] = null;
+        elementos[topo] = null; // Zera a posição
+        topo = topo-1; // SÓ DEPOIS decrementa o índice
         return elemento;
     }
 
@@ -31,12 +33,16 @@ public class Pilha <T> {
     }
 
     public boolean isFull() {
-        return topo == elementos.length;
+        // Se topo (que é o índice) for igual a capacidade-1, a pilha está cheia.
+        return topo == elementos.length - 1;
     }
 
     public int size() {
         return topo + 1;
     }
 
+    public T peek() {
+        return elementos[topo];
+    }
 }
 

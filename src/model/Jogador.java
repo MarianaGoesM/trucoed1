@@ -5,65 +5,50 @@ import java.util.List;
 import enumerated.Naipe;
 import enumerated.Valor;
 
-public abstract class Jogador {
-	private List<Carta> mao;
-	private String nome;
-	private int pontuacao;
-	private Carta cartaJogada;
 
-	public Jogador(String nome) {
-		this.nome = nome;
-		this.mao = new ArrayList<Carta>();
-	}
+public abstract class Jogador<T> {
+    private List<T> mao;
+    private String nome;
+    private int pontuacao;
+    private T cartaJogada;
+    private int time;
 
-	public abstract Carta jogarCarta();
+    public Jogador(String nome, int time) {
+        this.nome = nome;
+        this.mao = new ArrayList<T>();
+        this.time = time;
+    }
 
-	public void addCarta(Carta c) {
-		this.mao.add(c);
-	}
 
-	public Carta removeCarta(Naipe n, Valor v) {
-		for (Carta c : mao) {
-			if (c.getNaipe().equals(n) && c.getValor().equals(v)) {
-				mao.remove(c);
-				return c;
-			}
-		}
-		
-		return null;
-	}
+    public abstract T jogarCarta();
 
-	public List<Carta> getMao() {
-		return mao;
-	}
+    public void addCarta(T c) {
+        this.mao.add(c);
+    }
 
-	public void setMao(List<Carta> mao) {
-		this.mao = mao;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public String getNome() {
+        return this.nome;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public List<T> getMao() {
+        return mao;
+    }
 
-	public int getPontuacao() {
-		return pontuacao;
-	}
+    public void setMao(List<T> mao) {
+        this.mao = mao;
+    }
 
-	public void setPontuacao(int pontuacao) {
-		this.pontuacao = pontuacao;
-	}
 
-	public Carta getCartaJogada() {
-		return cartaJogada;
-	}
+    public int getTime() {
+        return time;
+    }
 
-	public void setCartaJogada(Carta cartaJogada) {
-		this.cartaJogada = cartaJogada;
-	}
-	
-	
+    public void setTime(int time) {
+        this.time = time;
+    }
+
 }

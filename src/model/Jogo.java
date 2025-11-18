@@ -2,78 +2,84 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.LinkedList; // Importar LinkedList
 
 public class Jogo {
-	private Set<Jogador> jogadores;
-	private int numeroJogadores;
-	private Date data;
-	private int pontosA;
-	private int pontosB;
-	private List<Partida> partidas;
-	private Baralho b;
 
-	public Jogo() {
-		this.jogadores = new HashSet<Jogador>();
-		this.partidas = new ArrayList<Partida>();
-	}
-	
-	public void addJogador(Jogador j){
-		this.jogadores.add(j);
-	}
+    private LinkedList<Jogador<Carta>> jogadores;
+    private int numeroJogadores;
+    private Date data;
 
-	public void addPartida(Partida p){
-		this.partidas.add(p);
-	}
-	
-	public Set<Jogador> getJogadores() {
-		return jogadores;
-	}
+    private int pontosA;
+    private int pontosB;
+    private List<Partida> partidas;
+    private Baralho b;
 
-	public void setJogadores(Set<Jogador> jogadores) {
-		this.jogadores = jogadores;
-	}
+    public Jogo() {
 
-	public int getNumeroJogadores() {
-		return numeroJogadores;
-	}
+        this.jogadores = new LinkedList<Jogador<Carta>>();
+        this.partidas = new ArrayList<Partida>();
+    }
 
-	public void setNumeroJogadores(int numeroJogadores) {
-		this.numeroJogadores = numeroJogadores;
-	}
 
-	public Date getData() {
-		return data;
-	}
+    public void addJogador(Jogador<Carta> j){
+        this.jogadores.addLast(j);
+    }
 
-	public void setData(Date data) {
-		this.data = data;
-	}
+    public void addPartida(Partida p){
+        this.partidas.add(p);
+    }
 
-	public int getPontosJogador() {
-		return pontosA;
-	}
 
-	public void setPontosJogador(int pontosA) {
-		this.pontosA = pontosA;
-	}
+    public List<Jogador<Carta>> getJogadores() {
+        return jogadores;
+    }
 
-	public int getPontosPc() {
-		return pontosB;
-	}
 
-	public void setPontosPc(int pontosB) {
-		this.pontosB = pontosB;
-	}
+    public void setJogadores(LinkedList<Jogador<Carta>> jogadores) {
+        this.jogadores = jogadores;
+    }
 
-	public Baralho getB() {
-		return b;
-	}
+    public int getNumeroJogadores() {
+        return numeroJogadores;
+    }
 
-	public void setB(Baralho b) {
-		this.b = b;
-	}
 
+
+    public void setNumeroJogadores(int numeroJogadores) {
+        this.numeroJogadores = numeroJogadores;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
+
+    public int getPontosA() {
+        return pontosA;
+    }
+
+    public void setPontosA(int pontosA) {
+        this.pontosA = pontosA;
+    }
+
+    public int getPontosB() {
+        return pontosB;
+    }
+
+    public void setPontosB(int pontosB) {
+        this.pontosB = pontosB;
+    }
+
+    public Baralho getB() {
+        return b;
+    }
+
+    public void setB(Baralho b) {
+        this.b = b;
+    }
 }

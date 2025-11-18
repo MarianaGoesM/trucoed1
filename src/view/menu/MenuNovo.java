@@ -62,7 +62,7 @@ public class MenuNovo extends JDialog implements ActionListener {
 		return tipoBaralho;
 	}
 
-	// se true é sujo, se false é limpo
+	// se true ï¿½ sujo, se false ï¿½ limpo
 	public void setTipoBaralho(JCheckBox chckbx) {
 		this.tipoBaralho = !chckbx.isSelected();
 	}
@@ -71,7 +71,7 @@ public class MenuNovo extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		
 		
-		JogoPrincipal jogo = new JogoPrincipal(nomeJogador.getText(), isTipoBaralho(), 2);
+		JogoPrincipal jogo = new JogoPrincipal(nomeJogador.getText(), isTipoBaralho(), 4);
 		jogo.setVisible(true);
 		setTipoBaralho(chckbxBaralhoLimpo);
 		setNomeDoJogador(nomeJogador);

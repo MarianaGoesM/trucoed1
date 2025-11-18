@@ -1,17 +1,18 @@
 package model;
 
-public class PC extends Jogador{
+public class PC extends Jogador<Carta>{
 	
 	private static int id;
-	
-	public PC(String nome) {
-		super(nome);
-	}
 
-	@Override
-	public Carta jogarCarta() {
-		return null;
-	}
+    public PC(String nome, int time) {
+        super(nome, time);
+        PC.id++;
+    }
+
+    @Override
+    public Carta jogarCarta() {
+        return null;
+    }
 	
 	public void decidirAcao(){
 		
