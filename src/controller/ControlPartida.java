@@ -118,7 +118,14 @@ public class ControlPartida {
             } else if (c1.getValor().getValor() < c2.getValor().getValor()) {
                 return -1;
             } else {
-                return 0;
+                if(c1.getNaipe().getValor() > c2.getNaipe().getValor()) {
+                    return 1; // c1 ganha pelo naipe
+                } else if (c1.getNaipe().getValor() < c2.getNaipe().getValor()) {
+                    return -1; // c2 ganha pelo naipe
+                } else {
+                    return 0; // Empate total (valor e naipe)
+                }
+
             }
         }
     }
@@ -155,6 +162,8 @@ public class ControlPartida {
                 cartaVencedora = cartaAtual;
                 empate = false;
             } else if (resultado == 0) {
+                // Se o naipe também é igual (retorno 0), o critério de desempate passa a ser a ordem de jogada.
+                // Mas apenas se o empate for entre times adversários.
                 if (cartaAtual.getJogador().getTime() != cartaVencedora.getJogador().getTime()) {
                     empate = true;
                 }

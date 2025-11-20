@@ -108,21 +108,12 @@ public class ControlJogo {
         this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
     }
 
-    /**
-     * Define o índice do jogador que começará a próxima Mão/Rodada.
-     * Deve ser chamado APÓS o fim de uma rodada (turno).
-     * @param proximoStarterIndex Índice do jogador que vai começar.
-     */
+
     public void setIndiceJogadorMao(int proximoStarterIndex) {
         this.indiceJogadorMao = proximoStarterIndex;
     }
 
-    /**
-     * Atualiza o placar do SET (pontuação de 12 pontos).
-     * Chamada quando uma Mão (melhor de 3) termina.
-     * @param pontosGanhos Quantos pontos a Mão vale.
-     * @param vencedorMao 1 ou -1.
-     */
+
     public void atualizarPlacarSet(int pontosGanhos, int vencedorMao) {
         if (vencedorMao == 1) { // Time 1 venceu a Mão
             this.pontosSetTime1 += pontosGanhos;
