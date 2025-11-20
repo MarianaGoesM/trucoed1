@@ -1,9 +1,9 @@
 package controller;
 
-import java.util.List; // Alterado de Set para List
+import java.util.List;
 import model.Carta;
 import model.CartaJogada;
-import model.Jogador; // Importa o tipo genérico
+import model.Jogador;
 import model.Turno;
 
 public class ControlTurno {
@@ -34,6 +34,4 @@ public class ControlTurno {
     public void setTurno(Turno turno) {
         this.turno = turno;
     }
-
-
 }

@@ -5,17 +5,18 @@ import java.awt.event.MouseListener;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+
 import controller.ControlJogo;
 import controller.ControlPartida;
 import controller.ControlTurno;
 import model.Carta;
 import model.Jogador;
-import model.Jogo;
-import model.CartaJogada; // Importar CartaJogada
+import model.CartaJogada;
 
 public class JogoPrincipal extends JFrame implements MouseListener {
 
-    private int i = 0; // Índice do turno atual (0, 1, 2)
+    private int i = 0;
     private PainelJogo painel;
     private ControlPartida cp;
     private ControlJogo cj;
@@ -44,47 +45,60 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     }
 
     public void inicioPartida() {
-        // Zera o contador de turnos para a nova mão
         this.i = 0;
 
-        // Garante que uma nova partida/mão está pronta
         cp.novaPartida();
         cj.getJogo().addPartida(cp.getPartida());
+        boolean tipoBaralho = cj.getJogo().getB() != null ? cj.getJogo().getB().isTipo() : false;
+        cj.setarBaralho(tipoBaralho);
 
-        // Distribui cartas
+        for (Jogador<Carta> j : cj.getJogo().getJogadores()) {
+            j.getMao().clear();
+        }
+
         cp.distribuiCartas(cj.getJogo().getJogadores(), cj.getJogo().getB());
 
-        // Cria a tela, passando a lista COMPLETA de jogadores
         painel.criarTela(cj.getJogo().getJogadores());
 
-        // Configura a manilha
         if (cp.getPartida() != null && cp.getPartida().getManilha() != null) {
             this.painel.setManilha(cp.getPartida().getManilha().getNaipe().toString().toLowerCase(),
                     cp.getPartida().getManilha().getValor().toString().toLowerCase());
         }
 
-        addCardMouseListener();
+        iniciarTurnoComVerificacao();
+    }
 
-        // Inicia um novo Turno (Rodada 1)
+    private void iniciarTurnoComVerificacao() {
         cp.iniciarTurno();
+
+        int indiceJogadorMao = cj.getIndiceJogadorMao();
+
+        if (indiceJogadorMao == 0) {
+            addCardMouseListener();
+        } else {
+            iniciarFluxoPC();
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+        int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
+        int indiceInicial = cj.getIndiceJogadorMao();
+
+        int jogadorDaVezIndex = (indiceInicial - cartasJogadasNoTurno + 4) % 4;
+
+        if (jogadorDaVezIndex != 0) return;
+
         String name = e.getComponent().getName();
 
         Jogador<Carta> jogadorHumano = cj.getJogadorHumano();
         if (jogadorHumano == null) return;
 
         Carta cartaJogadaJogador = null;
-        Jogo jogo = cj.getJogo();
-
         List<Carta> cartasHumano = jogadorHumano.getMao();
-        List<Jogador<Carta>> jogadores = cj.getJogo().getJogadores();
-
         JLabel card = null;
 
-        // 1. Identifica e processa a jogada do Humano
         if (name.equalsIgnoreCase(this.painel.getCard1().getName())) {
             card = painel.getCard1();
         } else if (name.equalsIgnoreCase(this.painel.getCard2().getName())) {
@@ -94,176 +108,192 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         }
 
         if (card != null) {
+            Carta cartaParaRemover = null;
             for (Carta carta : cartasHumano) {
                 if (card.getName().contains(carta.getNaipe().toString().toLowerCase())
                         && card.getName().contains(carta.getValor().toString().toLowerCase())) {
                     cartaJogadaJogador = carta;
-                    // Remove a carta da mão do Humano
-                    cartasHumano.remove(carta);
+                    cartaParaRemover = carta;
                     break;
                 }
             }
+            if (cartaParaRemover != null) {
+                cartasHumano.remove(cartaParaRemover);
+            }
         }
 
-        // Se o Humano jogou uma carta válida
         if (cartaJogadaJogador != null) {
-            // Move a carta do Humano para a mesa
+            removerCardMouseListener();
+
             this.painel.moverCardParaMesa(card, cartaJogadaJogador.getNaipe().toString().toLowerCase(),
                     cartaJogadaJogador.getValor().toString().toLowerCase());
 
-            // 1. REGISTRA A JOGADA DO HUMANO
             ct.novaCartaJogada(jogadorHumano, cartaJogadaJogador);
 
-            // 2. Simula e REGISTRA as jogadas dos 3 PCs
-            for (int pcIndex = 1; pcIndex < jogadores.size(); pcIndex++) {
-                Jogador<Carta> jogadorPC = jogadores.get(pcIndex);
-                List<Carta> maoPC = jogadorPC.getMao();
+            iniciarFluxoPC();
+        }
+    }
 
-                // CORREÇÃO ESSENCIAL: PC SEMPRE JOGA O ÍNDICE 0 E REMOVE O ÍNDICE 0
-                // O índice 'i' é apenas para contar o número de turnos.
-                if (!maoPC.isEmpty()) {
-                    Carta cartaPCJogada = maoPC.get(0); // Pega a primeira carta restante
 
-                    // Registra a jogada do PC
-                    ct.novaCartaJogada(jogadorPC, cartaPCJogada);
+    private void iniciarFluxoPC() {
+        new Thread(() -> {
+            try {
+                List<Jogador<Carta>> jogadores = cj.getJogo().getJogadores();
 
-                    // Movimentação visual da carta do PC (Layout 2x2)
-                    String naipe = cartaPCJogada.getNaipe().toString();
-                    String valor = cartaPCJogada.getValor().toString();
+                int cartasJogadas = ct.getTurno().getCartasJogadas().size();
 
-                    if (pcIndex == 2) { // PC 2 (Parceiro) -> Posição da Frente
-                        painel.viraCartaPc(naipe, valor);
-                    } else if (pcIndex == 1) { // PC 1 (Oponente) -> Posição Lateral 1
-                        painel.viraCartaPCSide1(naipe, valor);
-                    } else if (pcIndex == 3) { // PC 3 (Oponente) -> Posição Lateral 2
-                        painel.viraCartaPCSide2(naipe, valor);
+                int indiceInicial = cj.getIndiceJogadorMao();
+
+                int proximoAJogarIndex;
+                if (cartasJogadas == 0) {
+                    proximoAJogarIndex = indiceInicial;
+                } else {
+                    int ultimoAJogarIndex = (indiceInicial - cartasJogadas + 1 + 4) % 4;
+                    proximoAJogarIndex = (ultimoAJogarIndex - 1 + 4) % 4;
+                }
+
+                int jogadasRestantes = 4 - cartasJogadas;
+
+                for (int count = 0; count < jogadasRestantes; count++) {
+
+                    if (proximoAJogarIndex == 0) {
+                        SwingUtilities.invokeLater(() -> addCardMouseListener());
+                        break;
                     }
 
-                    // Remove a carta da mão do PC
-                    maoPC.remove(0); // Remove o index 0
+                    Jogador<Carta> jogadorPC = jogadores.get(proximoAJogarIndex);
+
+                    cp.aplicarDelay(1);
+
+                    simularJogadaPC(jogadorPC);
+
+                    proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
                 }
+
+                if (ct.getTurno().getCartasJogadas().size() == 4) {
+                    SwingUtilities.invokeLater(() -> verificarFimTurno());
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+        }).start();
+    }
 
-            // 3. Incrementa 'i' (contador de turnos jogados: 0 -> 1 -> 2)
-            i++;
+    private void simularJogadaPC(Jogador<Carta> jogadorPC) {
+        List<Carta> maoPC = jogadorPC.getMao();
+        if (maoPC.isEmpty()) return;
 
-            // 4. Verifica Vencedor do Turno (apenas se 4 cartas foram jogadas)
-            List<CartaJogada> cartasDoTurno = ct.getTurno().getCartasJogadas();
+        Carta cartaPCJogada = maoPC.get(0);
+        System.out.println("DEBUG: PC JOGANDO: " + jogadorPC.getNome() + " - Carta: " + cartaPCJogada.getValor());
+        ct.novaCartaJogada(jogadorPC, cartaPCJogada);
 
-            if (cartasDoTurno.size() == 4) {
+        SwingUtilities.invokeLater(() -> {
+            int pcIndex = cj.getJogo().getJogadores().indexOf(jogadorPC);
+            String naipe = cartaPCJogada.getNaipe().toString();
+            String valor = cartaPCJogada.getValor().toString();
 
-                int vencedorTurno = cp.verificarVencedorTurno(cartasDoTurno, cp.getPartida().getManilha());
+            if (pcIndex == 2) {
+                painel.viraCartaPc(naipe, valor);
+            } else if (pcIndex == 1) {
+                painel.viraCartaPCSide1(naipe, valor);
+            } else if (pcIndex == 3) {
+                painel.viraCartaPCSide2(naipe, valor);
+            }
+        });
 
-                // Lógica de pontuação por turno (1 ponto)
-                if (vencedorTurno == 1) {
-                    jogo.setPontosA(jogo.getPontosA() + 1); // Time 1 venceu o Turno
-                } else if (vencedorTurno == -1) {
-                    jogo.setPontosB(jogo.getPontosB() + 1); // Time 2 venceu o Turno
+        maoPC.remove(0);
+    }
+
+    private void verificarFimTurno() {
+        List<CartaJogada> cartasDoTurno = ct.getTurno().getCartasJogadas();
+
+        if (cartasDoTurno.size() != 4) return;
+
+        int resultado = cp.verificarVencedorTurno(cartasDoTurno, cp.getPartida().getManilha());
+
+        new Thread(() -> {
+            try {
+                // FIM DA MÃO (MELHOR DE 3 RODADAS)
+                if (resultado == 10 || resultado == -10) {
+                    int vencedorMao = (resultado == 10) ? 1 : -1;
+                    cj.atualizarPlacarSet(1, vencedorMao);
+
+                    SwingUtilities.invokeLater(() -> {
+                        painel.atualizaPlacar(cj.getJogo().getPontosA(), cj.getJogo().getPontosB());
+                        painel.atualizaPlacarSet(cj.getPontosSetTime1(), cj.getPontosSetTime2());
+                    });
+
+                    cp.aplicarDelay(3);
+
+                    SwingUtilities.invokeLater(() -> {
+                        painel.limparMesa(); // LIMPA A MESA FINALMENTE
+                        inicioPartida();
+                    });
                 }
-                // Se for empate (0), o ControlPartida já deve ter marcado 'isMelado' no Turno.
+                // TURNO GANHO OU EMPATE (A MÃO CONTINUA)
+                else {
 
-                // ATUALIZAÇÃO DO PLACAR VISUAL
-                painel.atualizaPlacar(jogo.getPontosA(), jogo.getPontosB());
+                    cj.getJogo().setPontosA(cp.getTurnosGanhosTime1());
+                    cj.getJogo().setPontosB(cp.getTurnosGanhosTime2());
 
-                // Se o placar NÃO estiver atualizando, verifique o PainelJogo (veja a recomendação abaixo)
+                    if (resultado != 0) {
+                        CartaJogada cartaVencedora = encontrarCartaVencedora(cartasDoTurno, cp.getPartida().getManilha());
+                        int vencedorIndex = cj.getJogo().getJogadores().indexOf(cartaVencedora.getJogador());
+                        cj.setIndiceJogadorMao(vencedorIndex);
+                    }
 
-                // FLUXO DE JOGO: Mão/Partida
+                    SwingUtilities.invokeLater(() -> {
+                        painel.atualizaPlacar(cj.getJogo().getPontosA(), cj.getJogo().getPontosB());
+                    });
 
-                if (i >= 3) {
-                    // A MÃO (3 turnos) ACABOU - Inicia a próxima Partida/Mão
-                    // ** ADICIONE A LÓGICA DE VERIFICAR VENCEDOR DA MÃO AQUI **
+                    cp.aplicarDelay(2);
 
-                    // placeholder: Inicia uma nova mão
-                    System.out.println("Mão encerrada. Nova mão iniciada.");
-                    // Chame um método de limpeza visual da mesa aqui
-                    inicioPartida(); // Reinicia o processo (distribui cartas, zera 'i')
-                } else {
-                    // O Turno acabou, mas a Mão continua. Inicia o próximo Turno.
-                    // ** ADICIONE UM DELAY (Thread.sleep) E LIMPEZA VISUAL AQUI **
-                    cp.iniciarTurno();
+                    SwingUtilities.invokeLater(() -> {
+                        painel.limparMesa();
+
+                        Jogador<Carta> jHumano = cj.getJogadorHumano();
+                        if (jHumano != null) {
+                            painel.atualizarMaoHumano(jHumano.getMao());
+                        }
+
+                        iniciarTurnoComVerificacao();
+                    });
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private CartaJogada encontrarCartaVencedora(List<CartaJogada> cartasDoTurno, Carta manilha) {
+        if (cartasDoTurno.isEmpty()) return null;
+
+        CartaJogada cartaVencedora = cartasDoTurno.get(0);
+
+        for (int i = 1; i < cartasDoTurno.size(); i++) {
+            CartaJogada cartaAtual = cartasDoTurno.get(i);
+            int resultado = cp.compararCartasTruco(cartaAtual.getCarta(), cartaVencedora.getCarta(), manilha);
+
+            if (resultado == 1) {
+                cartaVencedora = cartaAtual;
+            } else if (resultado == 0) {
             }
         }
+        return cartaVencedora;
     }
 
-    // ... (mouseEntered, mouseExited e Getters/Setters permanecem iguais)
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        String name = e.getComponent().getName();
-        Carta c = null;
-        JLabel card = null;
-        List<Carta> cartas = cj.getJogadorHumano().getMao();
-
-        if (name.equalsIgnoreCase(this.painel.getCard1().getName())) {
-            card = painel.getCard1();
-        } else if (name.equalsIgnoreCase(this.painel.getCard2().getName())) {
-            card = painel.getCard2();
-        } else if (name.equalsIgnoreCase(this.painel.getCard3().getName())) {
-            card = painel.getCard3();
-        }
-
-        if (card != null) {
-            for (Carta carta : cartas) {
-                if (card.getName().contains(carta.getNaipe().toString().toLowerCase())
-                        && card.getName().contains(carta.getValor().toString().toLowerCase())) {
-                    c = carta;
-                    break;
-                }
-            }
-            if (c != null) {
-                painel.setIconeGrande(card, c.getNaipe().toString().toLowerCase(), c.getValor().toString().toLowerCase());
-            }
-        }
+    public void removerCardMouseListener() {
+        this.painel.getCard1().removeMouseListener(this);
+        this.painel.getCard2().removeMouseListener(this);
+        this.painel.getCard3().removeMouseListener(this);
     }
 
-    @Override
-    public void mouseExited(MouseEvent e) {
-        String name = e.getComponent().getName();
-        Carta c = null;
-        JLabel card = null;
-        List<Carta> cartas = cj.getJogadorHumano().getMao();
-
-        if (name.equalsIgnoreCase(this.painel.getCard1().getName())) {
-            card = painel.getCard1();
-        } else if (name.equalsIgnoreCase(this.painel.getCard2().getName())) {
-            card = painel.getCard2();
-        } else if (name.equalsIgnoreCase(this.painel.getCard3().getName())) {
-            card = painel.getCard3();
-        }
-
-        if (card != null) {
-            for (Carta carta : cartas) {
-                if (card.getName().contains(carta.getNaipe().toString().toLowerCase())
-                        && card.getName().contains(carta.getValor().toString().toLowerCase())) {
-                    c = carta;
-                    break;
-                }
-            }
-            if (c != null) {
-                painel.setIconePequeno(card, c.getNaipe().toString().toLowerCase(), c.getValor().toString().toLowerCase(),
-                        card.getX());
-            }
-        }
-    }
-
-    public PainelJogo getPainel() {
-        return painel;
-    }
-
-    public ControlJogo getControlJogo() {
-        return cj;
-    }
-
-    public void setPainel(PainelJogo painel) {
-        this.painel = painel;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
+    @Override public void mouseEntered(MouseEvent e) { }
+    @Override public void mouseExited(MouseEvent e) { }
+    public PainelJogo getPainel() { return painel; }
+    public ControlJogo getControlJogo() { return cj; }
+    public void setPainel(PainelJogo painel) { this.painel = painel; }
+    @Override public void mousePressed(MouseEvent e) { }
+    @Override public void mouseReleased(MouseEvent e) { }
 }

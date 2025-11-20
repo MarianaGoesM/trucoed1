@@ -11,17 +11,23 @@ public class ControlPartida {
     private ControlTurno ct;
     private Partida partida;
 
+    private int turnosGanhosTime1;
+    private int turnosGanhosTime2;
+
     public ControlPartida(ControlTurno ct) {
         this.ct = ct;
+        this.turnosGanhosTime1 = 0;
+        this.turnosGanhosTime2 = 0;
     }
 
     public void novaPartida() {
         setPartida(new Partida());
+        this.turnosGanhosTime1 = 0;
+        this.turnosGanhosTime2 = 0;
     }
 
     public void iniciarTurno() {
         ct.criaTurno();
-        // CORREÇÃO: Deve adicionar o Turno (ct.getTurno()), não a Partida (ct.getPartida())
         partida.addTurno(ct.getTurno());
     }
 
@@ -87,7 +93,7 @@ public class ControlPartida {
     }
 
 
-    private int compararCartasTruco(Carta c1, Carta c2, Carta manilha) {
+    public int compararCartasTruco(Carta c1, Carta c2, Carta manilha) {
         int valorManilha = manilha.getValor().getValor() + 1;
         if (valorManilha > 10) valorManilha = 1;
 
@@ -95,11 +101,10 @@ public class ControlPartida {
         boolean c2Manilha = c2.getValor().getValor() == valorManilha;
 
         if (c1Manilha && !c2Manilha) {
-            return 1; // c1 ganha
+            return 1;
         } else if (!c1Manilha && c2Manilha) {
-            return -1; // c2 ganha
+            return -1;
         } else if (c1Manilha && c2Manilha) {
-            // Ambas são manilha, desempata pelo naipe (ZAP > COPEIRA > ESPADILHA > PICAFUMO)
             if(c1.getNaipe().getValor() > c2.getNaipe().getValor()) {
                 return 1;
             } else if (c1.getNaipe().getValor() < c2.getNaipe().getValor()) {
@@ -108,20 +113,17 @@ public class ControlPartida {
                 return 0;
             }
         } else {
-            // Nenhuma é manilha, desempata pelo valor
             if (c1.getValor().getValor() > c2.getValor().getValor()) {
                 return 1;
             } else if (c1.getValor().getValor() < c2.getValor().getValor()) {
                 return -1;
             } else {
-                return 0; // Empate em valor
+                return 0;
             }
         }
     }
 
     public boolean IdentificarSeZap(Carta carta, Carta manilha) {
-        // A manilha de paus é a quarta manilha (valor 4 no Naipe).
-        // O valor deve ser o da manilha + 1, e o naipe deve ser o naipe de ZAP (Paus, valor 4)
         if (carta.getValor().getValor() == manilha.getValor().getValor() + 1 && carta.getNaipe().getValor() == 4) {
             return true;
         } else {
@@ -129,53 +131,68 @@ public class ControlPartida {
         }
     }
 
-
     public int verificarVencedorTurno(List<CartaJogada> cartasJogadas, Carta manilha) {
 
         if (cartasJogadas == null || cartasJogadas.size() != 4) {
-            // Se não houver 4 cartas, retorna 0 (ou lança exceção).
             return 0;
         }
 
-        // --- Regra Especial do ZAP (Manilha de Paus) ---
-        // Verifica se o ZAP foi jogado. Se sim, o time que jogou vence imediatamente.
-        for (CartaJogada cj : cartasJogadas) {
-            if (IdentificarSeZap(cj.getCarta(), manilha)) {
-                return cj.getJogador().getTime() == 1 ? 1 : -1;
-            }
-        }
-
-        // --- Comparação Iterativa para o Vencedor ---
-
-        // 1. Define a primeira carta como a mais forte inicialmente
         CartaJogada cartaVencedora = cartasJogadas.get(0);
         boolean empate = false;
+
+        for (CartaJogada cj : cartasJogadas) {
+            if (IdentificarSeZap(cj.getCarta(), manilha)) {
+                int vencedor = cj.getJogador().getTime() == 1 ? 1 : -1;
+                return pontuarMao(vencedor);
+            }
+        }
 
         for (int i = 1; i < cartasJogadas.size(); i++) {
             CartaJogada cartaAtual = cartasJogadas.get(i);
             int resultado = compararCartasTruco(cartaAtual.getCarta(), cartaVencedora.getCarta(), manilha);
 
-            if (resultado == 1) { // cartaAtual é maior que cartaVencedora
+            if (resultado == 1) {
                 cartaVencedora = cartaAtual;
                 empate = false;
-            } else if (resultado == 0) { // Empate entre as cartas
-                // Se o empate for entre times diferentes, é melado
+            } else if (resultado == 0) {
                 if (cartaAtual.getJogador().getTime() != cartaVencedora.getJogador().getTime()) {
                     empate = true;
                 }
             }
-
         }
 
-        // --- Resultado Final ---
         if (empate) {
             ct.getTurno().setMelado(true);
-            return 0; // Melado
+            return 0;
         }
 
-        // Vencedor é o time da carta mais forte
-        return cartaVencedora.getJogador().getTime() == 1 ? 1 : -1;
+        int vencedorTurno = cartaVencedora.getJogador().getTime() == 1 ? 1 : -1;
+
+        return pontuarMao(vencedorTurno);
     }
+
+    private int pontuarMao(int vencedor) {
+        if (vencedor == 1) {
+            this.turnosGanhosTime1++;
+        } else if (vencedor == -1) {
+            this.turnosGanhosTime2++;
+        }
+
+        if (this.turnosGanhosTime1 >= 2 || this.turnosGanhosTime2 >= 2) {
+            return (this.turnosGanhosTime1 >= 2) ? 10 : -10;
+        }
+
+        return vencedor;
+    }
+
+    public void aplicarDelay(int segundos) {
+        try {
+            Thread.sleep(segundos * 1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
 
     public void verificarVendorPartida() {
 
@@ -215,5 +232,13 @@ public class ControlPartida {
 
     public void setPartida(Partida partida) {
         this.partida = partida;
+    }
+
+    public int getTurnosGanhosTime1() {
+        return turnosGanhosTime1;
+    }
+
+    public int getTurnosGanhosTime2() {
+        return turnosGanhosTime2;
     }
 }

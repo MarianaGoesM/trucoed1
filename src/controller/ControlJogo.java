@@ -8,10 +8,9 @@ import model.Carta;
 import model.CriadorCarta;
 import model.CriadorPC;
 import model.CriadorPessoa;
-import model.FactoryJogador;
 import model.Jogador;
 import model.Jogo;
-import model.Pessoa; // Importar Pessoa para o instanceof
+import model.Pessoa;
 
 public class ControlJogo {
     private CriadorCarta fabricaCarta;
@@ -20,11 +19,21 @@ public class ControlJogo {
     private Jogo jogo;
     private ControlPartida cp;
 
+    // NOVO: Controle da ordem circular (quem joga primeiro)
+    private int indiceJogadorMao; // 0 a 3, índice do jogador que começa o turno/mão
+    // NOVO: Placar do SET (Truco Paulista: 12 pontos para ganhar o set)
+    private int pontosSetTime1;
+    private int pontosSetTime2;
+
     public ControlJogo(ControlPartida cp) {
         this.fabricaCarta = new CriadorCarta();
         this.valores = Valor.values();
         this.naipes = Naipe.values();
         this.cp = cp;
+
+        this.pontosSetTime1 = 0;
+        this.pontosSetTime2 = 0;
+        this.indiceJogadorMao = 0; // Jogador Humano (índice 0) começa a primeira Mão/Rodada
     }
 
     public void setarBaralho(boolean bool) {
@@ -56,7 +65,6 @@ public class ControlJogo {
         b.addCarta(c);
     }
 
-    // Método setarJogador corrigido para a Factory e Generics
     public Jogador<Carta> setarJogador(boolean cond, String nome, int time) {
 
         if (cond) {
@@ -67,7 +75,6 @@ public class ControlJogo {
 
     }
 
-    // Lógica 2x2 para configurar 4 jogadores
     public void setarJogadoresJogo(String nomePessoa, int numerojogadores){
         if (numerojogadores != 4) return;
 
@@ -76,15 +83,15 @@ public class ControlJogo {
         if (p1 != null) this.jogo.addJogador(p1);
         System.out.println("criei: " + p1.getNome());
 
-        // Time 2: PC 1
+        // Time 2: PC 1 (Oponente 1)
         Jogador<Carta> pc1 = setarJogador(false, "", 2);
         if (pc1 != null) this.jogo.addJogador(pc1);
 
-        // Time 1: PC 2 (Parceiro)
+        // Time 1: PC 2 (Parceiro - Joga na frente)
         Jogador<Carta> pc2 = setarJogador(false, "", 1);
         if (pc2 != null)this.jogo.addJogador(pc2);
 
-        // Time 2: PC 3 (Oponente)
+        // Time 2: PC 3 (Oponente 2)
         Jogador<Carta> pc3 = setarJogador(false, "", 2);
         if (pc3 != null)this.jogo.addJogador(pc3);
 
@@ -98,9 +105,40 @@ public class ControlJogo {
         setarBaralho(tipo);
         cp.novaPartida();
         this.jogo.addPartida(cp.getPartida());
+        this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
     }
 
-    // CORREÇÃO do método getJogadorHumano: Usa List<Jogador<Carta>> e instanceof Pessoa
+    /**
+     * Define o índice do jogador que começará a próxima Mão/Rodada.
+     * Deve ser chamado APÓS o fim de uma rodada (turno).
+     * @param proximoStarterIndex Índice do jogador que vai começar.
+     */
+    public void setIndiceJogadorMao(int proximoStarterIndex) {
+        this.indiceJogadorMao = proximoStarterIndex;
+    }
+
+    /**
+     * Atualiza o placar do SET (pontuação de 12 pontos).
+     * Chamada quando uma Mão (melhor de 3) termina.
+     * @param pontosGanhos Quantos pontos a Mão vale.
+     * @param vencedorMao 1 ou -1.
+     */
+    public void atualizarPlacarSet(int pontosGanhos, int vencedorMao) {
+        if (vencedorMao == 1) { // Time 1 venceu a Mão
+            this.pontosSetTime1 += pontosGanhos;
+        } else if (vencedorMao == -1) { // Time 2 venceu a Mão
+            this.pontosSetTime2 += pontosGanhos;
+        }
+
+        // Zera o placar da Mão no Jogo (turnos ganhos)
+        this.jogo.setPontosA(0);
+        this.jogo.setPontosB(0);
+
+        // ** ADICIONE LÓGICA DE VERIFICAÇÃO DE FIM DE SET/PARTIDA AQUI **
+    }
+
+    public int getIndiceJogadorMao() { return indiceJogadorMao; }
+
     public Jogador<Carta> getJogadorHumano(){
         List<Jogador<Carta>> jogadores = jogo.getJogadores();
 
@@ -111,7 +149,6 @@ public class ControlJogo {
         }
         return null;}
 
-    // Método getJogadorpC corrigido para o tipo genérico
     public Jogador<Carta> getJogadorpC(){
         List<Jogador<Carta>> jogadores = jogo.getJogadores();
 
@@ -131,4 +168,7 @@ public class ControlJogo {
     public void setJogo(Jogo jogo) {
         this.jogo = jogo;
     }
+
+    public int getPontosSetTime1() { return pontosSetTime1; }
+    public int getPontosSetTime2() { return pontosSetTime2; }
 }
