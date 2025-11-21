@@ -114,8 +114,6 @@ public class ControlJogo {
         this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
     }
 
-    // --- Lógica Principal do Modo Roubo ---
-
     /**
      * Implementa o Modo Roubo: Busca Linear pela carta mais forte no baralho
      * e troca pela mais fraca na mão do jogador humano.
@@ -204,8 +202,6 @@ public class ControlJogo {
         return true;
     }
 
-    // --- Métodos de Placar e Getters/Setters ---
-
     public void atualizarPlacarSet(int pontosGanhos, int vencedorMao) {
         if (vencedorMao == 1) { // Time 1 venceu a Mão
             this.pontosSetTime1 += pontosGanhos;
@@ -219,12 +215,6 @@ public class ControlJogo {
 
         // ** ADICIONE LÓGICA DE VERIFICAÇÃO DE FIM DE SET/PARTIDA AQUI **
     }
-
-    // REMOVIDO: Método getValorManilha(Carta manilhaVirada) movido para ControlPartida.
-
-    // REMOVIDO: Método getForcaTruco(Carta carta, Carta manilhaVirada) movido para ControlPartida.
-
-    // REMOVIDO: Método getValorManilha(Valor valorVirado) removido por ser duplicado e desnecessário.
 
     public int getIndiceJogadorMao() { return indiceJogadorMao; }
 

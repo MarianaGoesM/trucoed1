@@ -173,6 +173,8 @@ public class ControlPartida {
                 cartaVencedora = cartaAtual;
                 empate = false;
             } else if (resultado == 0) {
+                // Se o naipe também é igual (retorno 0), o critério de desempate passa a ser a ordem de jogada.
+                // Mas apenas se o empate for entre times adversários.
                 if (cartaAtual.getJogador().getTime() != cartaVencedora.getJogador().getTime()) {
                     empate = true;
                 }
