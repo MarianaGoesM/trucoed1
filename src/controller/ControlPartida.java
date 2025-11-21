@@ -5,6 +5,8 @@ import java.util.Random;
 import java.util.Set;
 
 import model.*;
+import enumerated.Valor; // Importe necessário para usar o enum Valor
+import model.Carta;
 
 public class ControlPartida {
 
@@ -92,41 +94,50 @@ public class ControlPartida {
         System.out.println("Cartas pilha: " + novaPilha.size());
     }
 
+    // MÉTODO AUXILIAR PARA CALCULAR A MANILHA DE VIRA
+    private Valor getValorManilha(Carta manilhaVirada) {
+        if (manilhaVirada == null) return null;
+        return manilhaVirada.getValor().getProximoValor();
+    }
 
+    /**
+     * Retorna a força/peso numérico de uma carta na ordem do Truco.
+     * Necessário para a lógica de comparação e do Modo Roubo.
+     * @param carta A carta a ser avaliada.
+     * @param manilhaVirada A carta virada que define as manilhas do turno.
+     * @return Um valor inteiro que representa a força da carta (maior é mais forte).
+     */
+    public int getForcaTruco(Carta carta, Carta manilhaVirada) {
+
+        Valor valorManilha = getValorManilha(manilhaVirada);
+
+        // --- 1. Cartas Manilha (Força 11 a 14) ---
+        if (carta.getValor() == valorManilha) {
+            int forcaBase = 10;
+            // Usa o valor do naipe (assumindo ZAP=4, PICAFUMO=1)
+            return forcaBase + carta.getNaipe().getValor();
+        }
+
+        // --- 2. Cartas Comuns (Força 1 a 10) ---
+        // Usa o getPesoTruco() do enum Valor
+        return carta.getValor().getPesoTruco();
+    }
+
+
+    /**
+     * Compara duas cartas usando a força numérica do Truco.
+     * @return 1 se c1 vence, -1 se c2 vence, 0 se empatar.
+     */
     public int compararCartasTruco(Carta c1, Carta c2, Carta manilha) {
-        int valorManilha = manilha.getValor().getValor() + 1;
-        if (valorManilha > 10) valorManilha = 1;
+        int forcaC1 = getForcaTruco(c1, manilha);
+        int forcaC2 = getForcaTruco(c2, manilha);
 
-        boolean c1Manilha = c1.getValor().getValor() == valorManilha;
-        boolean c2Manilha = c2.getValor().getValor() == valorManilha;
-
-        if (c1Manilha && !c2Manilha) {
-            return 1;
-        } else if (!c1Manilha && c2Manilha) {
-            return -1;
-        } else if (c1Manilha && c2Manilha) {
-            if(c1.getNaipe().getValor() > c2.getNaipe().getValor()) {
-                return 1;
-            } else if (c1.getNaipe().getValor() < c2.getNaipe().getValor()) {
-                return -1;
-            } else {
-                return 0;
-            }
+        if (forcaC1 > forcaC2) {
+            return 1; // c1 vence
+        } else if (forcaC1 < forcaC2) {
+            return -1; // c2 vence
         } else {
-            if (c1.getValor().getValor() > c2.getValor().getValor()) {
-                return 1;
-            } else if (c1.getValor().getValor() < c2.getValor().getValor()) {
-                return -1;
-            } else {
-                if(c1.getNaipe().getValor() > c2.getNaipe().getValor()) {
-                    return 1; // c1 ganha pelo naipe
-                } else if (c1.getNaipe().getValor() < c2.getNaipe().getValor()) {
-                    return -1; // c2 ganha pelo naipe
-                } else {
-                    return 0; // Empate total (valor e naipe)
-                }
-
-            }
+            return 0; // Empate (Cores / Melado)
         }
     }
 

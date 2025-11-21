@@ -38,6 +38,7 @@ public class PainelJogo extends JPanel {
     private JLabel lblDesce;
     private JLabel lblCorre;
     private ImageIcon iconPedirTruco;
+    private JLabel lblModoRoubo;
     protected ImageIcon cardCostasGrande = new ImageIcon(
             this.getClass().getResource("/resource/img/cenario/carta-costas grande.png"));
     protected ImageIcon cardCostas = new ImageIcon(
@@ -126,6 +127,12 @@ public class PainelJogo extends JPanel {
         lblCorre.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
         lblCorre.setBounds(12, 277, 188, 104);
         this.add(lblCorre);
+
+        lblModoRoubo = new JLabel("ROUBO");
+        lblModoRoubo.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
+        // Posicionado um pouco abaixo de lblCorre
+        lblModoRoubo.setBounds(12, 354, 188, 104);
+        this.add(lblModoRoubo);
 
     }
 
@@ -268,19 +275,31 @@ public class PainelJogo extends JPanel {
     }
 
     public void viraCartaPc(String naipe, String valor){
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
+        // AQUI: Garantindo minúsculas
+        String naipeLower = naipe.toLowerCase();
+        String valorLower = valor.toLowerCase();
+
+        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
         this.cartaPc.setIcon(icone);
         this.setVisible(true);
     }
 
     public void viraCartaPCSide1(String naipe, String valor){
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
+        // AQUI: Garantindo minúsculas
+        String naipeLower = naipe.toLowerCase();
+        String valorLower = valor.toLowerCase();
+
+        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
         this.cardParceiro.setIcon(icone);
         this.cardParceiro.setVisible(true);
     }
 
     public void viraCartaPCSide2(String naipe, String valor){
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
+        // AQUI: Garantindo minúsculas
+        String naipeLower = naipe.toLowerCase();
+        String valorLower = valor.toLowerCase();
+
+        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
         this.cardPCLateral.setIcon(icone);
         this.cardPCLateral.setVisible(true);
     }
@@ -516,6 +535,14 @@ public class PainelJogo extends JPanel {
 
     public JLabel[] getCard() {
         return card;
+    }
+
+    public JLabel getLblModoRoubo() {
+        return lblModoRoubo;
+    }
+
+    public void setLblModoRoubo(JLabel lblModoRoubo) {
+        this.lblModoRoubo = lblModoRoubo;
     }
 
     public void setCard(JLabel[] card) {
