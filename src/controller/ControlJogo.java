@@ -18,14 +18,16 @@ public class ControlJogo {
     private Valor[] valores;
     private Naipe[] naipes;
     private Jogo jogo;
-    private ControlPartida cp; // Usado para acessar a lógica de Truco (getForcaTruco)
+    private ControlPartida cp;
 
-    // Controle da ordem circular (quem joga primeiro)
     private int indiceJogadorMao;
-    // Placar do SET
     private int pontosSetTime1;
     private int pontosSetTime2;
     private boolean modoRouboUsado;
+
+    private int valorAtualMao;
+    private static final int PLACAR_VITORIA = 12;
+    private boolean trucoPendente;
 
     public ControlJogo(ControlPartida cp) {
         this.fabricaCarta = new CriadorCarta();
@@ -38,9 +40,21 @@ public class ControlJogo {
         this.indiceJogadorMao = 0;
 
         this.modoRouboUsado = false;
+        this.valorAtualMao = 1;
+        this.trucoPendente = false;
     }
 
-    // --- Métodos de Setup (iniciaJogo, setarBaralho, etc.) ---
+    public void setCp(ControlPartida cp) {
+        this.cp = cp;
+    }
+
+    public void setPontosSetTime1(int pontosSetTime1) {
+        this.pontosSetTime1 = pontosSetTime1;
+    }
+
+    public void setPontosSetTime2(int pontosSetTime2) {
+        this.pontosSetTime2 = pontosSetTime2;
+    }
 
     public void setarBaralho(boolean bool) {
         Baralho b = new Baralho();
@@ -84,20 +98,16 @@ public class ControlJogo {
     public void setarJogadoresJogo(String nomePessoa, int numerojogadores){
         if (numerojogadores != 4) return;
 
-        // Time 1: Pessoa (Nome fornecido)
         Jogador<Carta> p1 = setarJogador(true, nomePessoa, 1);
         if (p1 != null) this.jogo.addJogador(p1);
         System.out.println("criei: " + p1.getNome());
 
-        // Time 2: PC 1 (Oponente 1)
         Jogador<Carta> pc1 = setarJogador(false, "", 2);
         if (pc1 != null) this.jogo.addJogador(pc1);
 
-        // Time 1: PC 2 (Parceiro - Joga na frente)
         Jogador<Carta> pc2 = setarJogador(false, "", 1);
         if (pc2 != null)this.jogo.addJogador(pc2);
 
-        // Time 2: PC 3 (Oponente 2)
         Jogador<Carta> pc3 = setarJogador(false, "", 2);
         if (pc3 != null)this.jogo.addJogador(pc3);
 
@@ -111,13 +121,15 @@ public class ControlJogo {
         setarBaralho(tipo);
         cp.novaPartida();
         this.jogo.addPartida(cp.getPartida());
-        this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
+        this.indiceJogadorMao = 0;
+        this.valorAtualMao = 1;
+        this.trucoPendente = false;
+
+        // NOVO PLACAR INICIAL PARA TESTES
+        this.pontosSetTime1 = 11;
+        this.pontosSetTime2 = 0;
     }
 
-    /**
-     * Implementa o Modo Roubo: Busca Linear pela carta mais forte no baralho
-     * e troca pela mais fraca na mão do jogador humano.
-     */
     public boolean aplicarModoRoubo() {
         if (this.modoRouboUsado) {
             System.out.println("Modo Roubo: Já foi usado nesta partida.");
@@ -133,11 +145,9 @@ public class ControlJogo {
             return false;
         }
 
-        // 1. Extrai e inspeciona as cartas do baralho (Busca Linear Setup)
         List<Carta> cartasNoBaralho = new ArrayList<>();
         Carta cartaPilha;
 
-        // Esvazia a pilha do baralho e move as cartas para uma lista
         while ((cartaPilha = baralho.ComprarCarta()) != null) {
             cartasNoBaralho.add(cartaPilha);
         }
@@ -147,20 +157,14 @@ public class ControlJogo {
             return false;
         }
 
-        // 2. BUSCA LINEAR: Encontra as cartas para a troca
-
-        // Inicializa a busca com a primeira carta do baralho e a primeira carta da mão
         Carta cartaMaisForteBaralho = cartasNoBaralho.get(0);
 
-        // CHAMA O MÉTODO CORRETO EM CONTROL_PARTIDA (cp)
         int forcaMax = cp.getForcaTruco(cartaMaisForteBaralho, manilhaVirada);
 
         Carta cartaMaisFracaHumano = jHumano.getMao().get(0);
 
-        // CHAMA O MÉTODO CORRETO EM CONTROL_PARTIDA (cp)
         int forcaMinHumano = cp.getForcaTruco(cartaMaisFracaHumano, manilhaVirada);
 
-        // Busca a carta mais forte no Baralho
         for (int i = 1; i < cartasNoBaralho.size(); i++) {
             Carta cartaAtual = cartasNoBaralho.get(i);
             int forcaAtual = cp.getForcaTruco(cartaAtual, manilhaVirada);
@@ -171,7 +175,6 @@ public class ControlJogo {
             }
         }
 
-        // Busca a carta mais fraca na Mão do Humano
         for (Carta carta : jHumano.getMao()) {
             int forcaAtual = cp.getForcaTruco(carta, manilhaVirada);
             if (forcaAtual < forcaMinHumano) {
@@ -180,19 +183,16 @@ public class ControlJogo {
             }
         }
 
-        // 3. TROCA DE CARTAS
         cartasNoBaralho.remove(cartaMaisForteBaralho);
         jHumano.getMao().remove(cartaMaisFracaHumano);
 
-        jHumano.getMao().add(cartaMaisForteBaralho); // Humano ganha a carta forte
-        baralho.addCarta(cartaMaisFracaHumano);      // Baralho recebe a carta fraca
+        jHumano.getMao().add(cartaMaisForteBaralho);
+        baralho.addCarta(cartaMaisFracaHumano);
 
-        // 4. Reconstroi o Baralho (coloca as cartas inspecionadas de volta na Pilha)
         for (Carta c : cartasNoBaralho) {
             baralho.addCarta(c);
         }
 
-        // 5. Finaliza
         this.modoRouboUsado = true;
         System.out.println("Modo Roubo executado. Ganhou: " + cartaMaisForteBaralho.getValor() +
                 " de " + cartaMaisForteBaralho.getNaipe() +
@@ -202,18 +202,104 @@ public class ControlJogo {
         return true;
     }
 
-    public void atualizarPlacarSet(int pontosGanhos, int vencedorMao) {
-        if (vencedorMao == 1) { // Time 1 venceu a Mão
+    public void pedirTruco() {
+
+        if (this.valorAtualMao == 3) {
+            int novoValor = 6;
+            this.valorAtualMao = novoValor;
+            this.trucoPendente = true;
+            System.out.println("Jogador: PEÇO SEIS! PC deve responder.");
+            return;
+        }
+
+        if (this.valorAtualMao == 1) {
+            this.valorAtualMao = 3;
+
+            boolean pcChamouTruco = (this.indiceJogadorMao == 1 || this.indiceJogadorMao == 3);
+
+            if (pcChamouTruco) {
+                this.trucoPendente = true;
+                System.out.println("PC: TRUCO! Jogador deve responder.");
+                return;
+            } else {
+                if (cp.pcTemZap()) {
+                    this.valorAtualMao = 6;
+                    this.trucoPendente = true;
+                    System.out.println("PC: ACEITO (3) e peço SEIS! Jogador deve responder.");
+                    return;
+                }
+                else if (cp.pcTemCartaForte()) {
+                    System.out.println("PC: ACEITO (3).");
+                }
+                else {
+                    System.out.println("PC: CORRO! Time do jogador ganha 1 ponto.");
+                    atualizarPlacarSet(1, 1);
+                    return;
+                }
+            }
+
+            System.out.println("Mão agora vale: " + this.valorAtualMao);
+        }
+    }
+
+    public int getValorAtualMao() {
+        return valorAtualMao;
+    }
+
+    public boolean isTrucoPendente() {
+        return trucoPendente;
+    }
+
+    public void setTrucoPendente(boolean trucoPendente) {
+        this.trucoPendente = trucoPendente;
+    }
+
+    public void aceitarTruco() {
+        this.trucoPendente = false;
+        System.out.println("Jogador aceitou. Mão vale " + this.valorAtualMao + ".");
+    }
+
+    public void correrTruco(int timePerdeu) {
+        this.trucoPendente = false;
+
+        int pontosVencedor;
+        if (this.valorAtualMao == 3) {
+            pontosVencedor = 1;
+        } else {
+            pontosVencedor = this.valorAtualMao - 3;
+        }
+
+        int vencedorTime = (timePerdeu == 1) ? -1 : 1;
+
+        atualizarPlacarSet(pontosVencedor, vencedorTime);
+        System.out.println((timePerdeu == 1 ? "Jogador" : "PC") + " correu. Time " + (vencedorTime == 1 ? "1" : "2") + " ganha " + pontosVencedor + " ponto(s). NOVA RODADA.");
+    }
+
+    public void atualizarPlacarSet(int pontosGanhos, int vencedorTime) {
+        if (vencedorTime == 1) {
             this.pontosSetTime1 += pontosGanhos;
-        } else if (vencedorMao == -1) { // Time 2 venceu a Mão
+        } else if (vencedorTime == -1) {
             this.pontosSetTime2 += pontosGanhos;
         }
 
-        // Zera o placar da Mão no Jogo (turnos ganhos)
         this.jogo.setPontosA(0);
         this.jogo.setPontosB(0);
 
-        // ** ADICIONE LÓGICA DE VERIFICAÇÃO DE FIM DE SET/PARTIDA AQUI **
+        if (this.cp != null) {
+            this.cp.resetTurnosGanhos();
+        }
+
+        this.valorAtualMao = 1;
+
+        verificarFimSet();
+    }
+
+    private void verificarFimSet() {
+        if (this.pontosSetTime1 >= PLACAR_VITORIA) {
+            cp.fimDeJogo(1);
+        } else if (this.pontosSetTime2 >= PLACAR_VITORIA) {
+            cp.fimDeJogo(-1);
+        }
     }
 
     public int getIndiceJogadorMao() { return indiceJogadorMao; }

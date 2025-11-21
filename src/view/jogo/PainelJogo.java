@@ -18,25 +18,22 @@ public class PainelJogo extends JPanel {
     private JLabel card[];
     private JLabel cartaMesa;
     private JLabel manilha;
-    private JLabel cartaPc; // Oponente sentado à frente
+    private JLabel cartaPc;
 
     private JLabel cardParceiro;
     private JLabel cardPCLateral;
     private JLabel lblNomePCParceiro;
     private JLabel lblNomePCLateral;
-    private JLabel placarSet; // Placar do Set (Melhor de 2)
+    private JLabel placarSet;
 
     private ImageIcon iconCard1;
     private ImageIcon iconCard2;
     private ImageIcon iconCard3;
     private JLabel cardJogadoPc;
-    private JLabel placar; // Placar da Mão (Melhor de 3)
+    private JLabel placar;
     private JLabel lblNomeJogador;
     private JLabel lblTipoBaralho;
     private JLabel lblPedirTruco;
-    private JLabel lblVirarCarta;
-    private JLabel lblDesce;
-    private JLabel lblCorre;
     private ImageIcon iconPedirTruco;
     private JLabel lblModoRoubo;
     protected ImageIcon cardCostasGrande = new ImageIcon(
@@ -110,28 +107,12 @@ public class PainelJogo extends JPanel {
 
         lblPedirTruco = new JLabel("TRUCO");
         lblPedirTruco.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblPedirTruco.setBounds(706, 200, 188, 104);
+        lblPedirTruco.setBounds(706, 300, 188, 104);
         this.add(lblPedirTruco);
-
-        lblVirarCarta = new JLabel("VIRAR");
-        lblVirarCarta.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblVirarCarta.setBounds(12, 200, 188, 104);
-        this.add(lblVirarCarta);
-
-        lblDesce = new JLabel("DESCE");
-        lblDesce.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblDesce.setBounds(706, 277, 171, 104);
-        this.add(lblDesce);
-
-        lblCorre = new JLabel("CORRE");
-        lblCorre.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblCorre.setBounds(12, 277, 188, 104);
-        this.add(lblCorre);
 
         lblModoRoubo = new JLabel("ROUBO");
         lblModoRoubo.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        // Posicionado um pouco abaixo de lblCorre
-        lblModoRoubo.setBounds(12, 354, 188, 104);
+        lblModoRoubo.setBounds(706, 380, 188, 104);
         this.add(lblModoRoubo);
 
     }
@@ -152,7 +133,6 @@ public class PainelJogo extends JPanel {
             return;
         }
 
-        // 1. Configura o Jogador Humano (Posição 0)
         Jogador<Carta> jHumano = jogadores.get(0);
         lblNomeJogador.setText(jHumano.getNome());
 
@@ -162,11 +142,9 @@ public class PainelJogo extends JPanel {
         }
 
 
-        // 2. Configura a mão do Jogador Humano
         int x = 256;
         List<Carta> mao = jHumano.getMao();
 
-        // Remove listeners antigos antes de configurar novos
         for (JLabel c : card) {
             if (c.getMouseListeners().length > 0) {
                 c.removeMouseListener(c.getMouseListeners()[0]);
@@ -187,12 +165,10 @@ public class PainelJogo extends JPanel {
             x += 175;
         }
 
-        // Esconde cartas que sobraram se a mão for menor que 3 (última rodada)
         for (int i = mao.size(); i < 3; i++) {
             card[i].setVisible(false);
         }
 
-        // 3. Configura nomes dos PCs (Assumindo que o Parceiro (2) fica na frente)
         lblNomePCParceiro.setText(jogadores.get(2).getNome());
         lblNomePCLateral.setText(jogadores.get(3).getNome());
         cartaPc.setName(jogadores.get(2).getNome());
@@ -205,7 +181,6 @@ public class PainelJogo extends JPanel {
         this.add(card);
     }
 
-    // hover para valores
     public void setIconePequeno(JLabel card, String naipe, String valor, int x) {
         ImageIcon icone = new ImageIcon(
                 this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
@@ -213,7 +188,6 @@ public class PainelJogo extends JPanel {
         card.setIcon(icone);
     }
 
-    // hover para carta costas
     public void setIconeGrande(JLabel card, String naipe, String valor) {
 
         ImageIcon icone = new ImageIcon(this.getClass()
@@ -222,7 +196,6 @@ public class PainelJogo extends JPanel {
         card.setIcon(icone);
     }
 
-    // para carta costas
     public void setIconePequeno(JLabel card) {
         ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/cenario/carta-costas.png"));
         if (card.getName().equals("card1"))
@@ -235,7 +208,6 @@ public class PainelJogo extends JPanel {
     }
 
     public void atualizaPlacar(int pontosTime1, int pontosTime2) {
-        // Placar da Mão (Turnos Ganhos)
         placar.setText("Mão: " + pontosTime1 + " X " + pontosTime2);
         this.placar.repaint();
     }
@@ -275,7 +247,6 @@ public class PainelJogo extends JPanel {
     }
 
     public void viraCartaPc(String naipe, String valor){
-        // AQUI: Garantindo minúsculas
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
 
@@ -285,7 +256,6 @@ public class PainelJogo extends JPanel {
     }
 
     public void viraCartaPCSide1(String naipe, String valor){
-        // AQUI: Garantindo minúsculas
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
 
@@ -295,7 +265,6 @@ public class PainelJogo extends JPanel {
     }
 
     public void viraCartaPCSide2(String naipe, String valor){
-        // AQUI: Garantindo minúsculas
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
 
@@ -307,25 +276,21 @@ public class PainelJogo extends JPanel {
     public void atualizarMaoHumano(List<Carta> mao) {
         int x = 256;
 
-        // 1. Esconde todos os cards para começar a re-renderização
         for (JLabel c : card) {
             c.setVisible(false);
         }
 
-        // 2. Renderiza apenas as cartas restantes na mão
         for (int i = 0; i < mao.size(); i++) {
             Carta carta = mao.get(i);
-            JLabel currentCardLabel = card[i]; // Usa o JLabel de posição i
+            JLabel currentCardLabel = card[i];
 
-            // Renomeia o label com a carta correta
             currentCardLabel.setName("carta" + i + "-" + carta.getNaipe().toString().toLowerCase() + "-"
                     + carta.getValor().toString().toLowerCase());
 
-            // Redefine o ícone e a posição
             setIconePequeno(currentCardLabel, carta.getNaipe().toString().toLowerCase(),
                     carta.getValor().toString().toLowerCase(), x);
 
-            currentCardLabel.setVisible(true); // Torna a carta visível
+            currentCardLabel.setVisible(true);
 
             x += 175;
         }
@@ -333,10 +298,6 @@ public class PainelJogo extends JPanel {
         this.repaint();
     }
 
-
-    // =========================================================
-    // GETTERS AND SETTERS COMPLETOS
-    // =========================================================
 
     public JLabel getCartaMesa() {
         return cartaMesa;
@@ -473,30 +434,6 @@ public class PainelJogo extends JPanel {
         this.lblPedirTruco = lblPedirTruco;
     }
 
-    public JLabel getLblVirarCarta() {
-        return lblVirarCarta;
-    }
-
-    public void setLblVirarCarta(JLabel lblVirarCarta) {
-        this.lblVirarCarta = lblVirarCarta;
-    }
-
-    public JLabel getLblDesce() {
-        return lblDesce;
-    }
-
-    public void setLblDesce(JLabel lblDesce) {
-        this.lblDesce = lblDesce;
-    }
-
-    public JLabel getLblCorre() {
-        return lblCorre;
-    }
-
-    public void setLblCorre(JLabel lblCorre) {
-        this.lblCorre = lblCorre;
-    }
-
     public ImageIcon getIconPedirTruco() {
         return iconPedirTruco;
     }
@@ -549,7 +486,6 @@ public class PainelJogo extends JPanel {
         this.card = card;
     }
 
-    // Método setter para lblNomeJogador (usando o nome da variável local)
     public void setNomeJogador(JLabel nomeJogador) {
         this.lblNomeJogador = nomeJogador;
     }

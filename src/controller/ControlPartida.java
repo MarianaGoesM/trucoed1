@@ -2,28 +2,45 @@ package controller;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-
-import model.*;
-import enumerated.Valor; // Importe necessário para usar o enum Valor
+import enumerated.Valor;
 import model.Carta;
+import model.CartaJogada;
+import model.Jogador;
+import model.Baralho;
+import model.Pilha;
+import model.Partida;
 
 public class ControlPartida {
 
     private ControlTurno ct;
     private Partida partida;
+    private ControlJogo cj;
 
     private int turnosGanhosTime1;
     private int turnosGanhosTime2;
 
-    public ControlPartida(ControlTurno ct) {
+    public ControlPartida(ControlTurno ct, ControlJogo cj) {
         this.ct = ct;
+        this.cj = cj;
         this.turnosGanhosTime1 = 0;
         this.turnosGanhosTime2 = 0;
     }
 
+    public void fimDeJogo(int vencedor) {
+        // Esta função deve ser implementada na View (JogoPrincipal)
+        // Como o JogoPrincipal implementa a lógica do pop-up, faremos um System.out.println
+        // Aqui para sinalizar e evitar o erro "cannot resolve symbol".
+        System.out.println("SINALIZADOR: FIM DE JOGO - Vencedor time " + (vencedor == 1 ? "1" : "2"));
+    }
+
+
     public void novaPartida() {
         setPartida(new Partida());
+        this.turnosGanhosTime1 = 0;
+        this.turnosGanhosTime2 = 0;
+    }
+
+    public void resetTurnosGanhos() {
         this.turnosGanhosTime1 = 0;
         this.turnosGanhosTime2 = 0;
     }
@@ -94,50 +111,39 @@ public class ControlPartida {
         System.out.println("Cartas pilha: " + novaPilha.size());
     }
 
-    // MÉTODO AUXILIAR PARA CALCULAR A MANILHA DE VIRA
     private Valor getValorManilha(Carta manilhaVirada) {
         if (manilhaVirada == null) return null;
         return manilhaVirada.getValor().getProximoValor();
     }
 
-    /**
-     * Retorna a força/peso numérico de uma carta na ordem do Truco.
-     * Necessário para a lógica de comparação e do Modo Roubo.
-     * @param carta A carta a ser avaliada.
-     * @param manilhaVirada A carta virada que define as manilhas do turno.
-     * @return Um valor inteiro que representa a força da carta (maior é mais forte).
-     */
+    public int getForcaTruco(Carta manilhaVirada) {
+        Valor valorManilha = getValorManilha(manilhaVirada);
+        return valorManilha.getPesoTruco() * 10 + 4;
+    }
+
     public int getForcaTruco(Carta carta, Carta manilhaVirada) {
 
         Valor valorManilha = getValorManilha(manilhaVirada);
 
-        // --- 1. Cartas Manilha (Força 11 a 14) ---
         if (carta.getValor() == valorManilha) {
-            int forcaBase = 10;
-            // Usa o valor do naipe (assumindo ZAP=4, PICAFUMO=1)
+            int forcaBase = 100;
             return forcaBase + carta.getNaipe().getValor();
         }
 
-        // --- 2. Cartas Comuns (Força 1 a 10) ---
-        // Usa o getPesoTruco() do enum Valor
-        return carta.getValor().getPesoTruco();
+        return carta.getValor().getPesoTruco() * 10 + carta.getNaipe().getValor();
     }
 
 
-    /**
-     * Compara duas cartas usando a força numérica do Truco.
-     * @return 1 se c1 vence, -1 se c2 vence, 0 se empatar.
-     */
     public int compararCartasTruco(Carta c1, Carta c2, Carta manilha) {
         int forcaC1 = getForcaTruco(c1, manilha);
         int forcaC2 = getForcaTruco(c2, manilha);
 
         if (forcaC1 > forcaC2) {
-            return 1; // c1 vence
+            return 1;
         } else if (forcaC1 < forcaC2) {
-            return -1; // c2 vence
+            return -1;
         } else {
-            return 0; // Empate (Cores / Melado)
+            return 0;
         }
     }
 
@@ -148,6 +154,32 @@ public class ControlPartida {
             return false;
         }
     }
+
+    public boolean pcTemZap() {
+        Jogador<Carta> pc1 = cj.getJogo().getJogadores().get(1);
+        Carta manilhaVirada = partida.getManilha();
+
+        for (Carta carta : pc1.getMao()) {
+            if (IdentificarSeZap(carta, manilhaVirada)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean pcTemCartaForte() {
+        Jogador<Carta> pc1 = cj.getJogo().getJogadores().get(1);
+        Carta manilhaVirada = partida.getManilha();
+
+        for (Carta carta : pc1.getMao()) {
+            int forca = getForcaTruco(carta, manilhaVirada);
+            if (forca >= Valor.TRES.getPesoTruco() * 10) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public int verificarVencedorTurno(List<CartaJogada> cartasJogadas, Carta manilha) {
 
@@ -173,8 +205,6 @@ public class ControlPartida {
                 cartaVencedora = cartaAtual;
                 empate = false;
             } else if (resultado == 0) {
-                // Se o naipe também é igual (retorno 0), o critério de desempate passa a ser a ordem de jogada.
-                // Mas apenas se o empate for entre times adversários.
                 if (cartaAtual.getJogador().getTime() != cartaVencedora.getJogador().getTime()) {
                     empate = true;
                 }

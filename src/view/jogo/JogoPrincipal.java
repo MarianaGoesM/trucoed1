@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import controller.ControlJogo;
@@ -24,8 +25,10 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
     public JogoPrincipal(String nome, boolean tipo, int n) {
         ct = new ControlTurno();
-        cp = new ControlPartida(ct);
-        cj = new ControlJogo(cp);
+        cj = new ControlJogo(null);
+        cp = new ControlPartida(ct, cj);
+
+        cj.setCp(cp);
 
         cj.iniciaJogo(nome, tipo, n);
 
@@ -42,7 +45,8 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         this.painel.getCard1().addMouseListener(this);
         this.painel.getCard2().addMouseListener(this);
         this.painel.getCard3().addMouseListener(this);
-        this.painel.getLblModoRoubo().addMouseListener(this); // Listener do botão ROUBO adicionado
+        this.painel.getLblModoRoubo().addMouseListener(this);
+        this.painel.getLblPedirTruco().addMouseListener(this);
     }
 
     public void inicioPartida() {
@@ -66,10 +70,53 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                     cp.getPartida().getManilha().getValor().toString().toLowerCase());
         }
 
+        painel.atualizaPlacar(cp.getTurnosGanhosTime1(), cp.getTurnosGanhosTime2());
+        painel.atualizaPlacarSet(cj.getPontosSetTime1(), cj.getPontosSetTime2());
+
         iniciarTurnoComVerificacao();
     }
 
+    public void fimDeJogo(int vencedor) {
+        String mensagem;
+        String titulo;
+
+        if (vencedor == 1) {
+            titulo = "Parabéns, Você Ganhou!";
+            mensagem = "Parabéns! Você alcançou 12 pontos. Deseja começar um Novo Jogo ou Sair?";
+        } else {
+            titulo = "Fim de Jogo";
+            mensagem = "Tente Novamente! O time adversário alcançou 12 pontos. Deseja começar um Novo Jogo ou Sair?";
+        }
+
+        Object[] options = {"Novo Jogo", "Sair"};
+        int n = JOptionPane.showOptionDialog(this,
+                mensagem,
+                titulo,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (n == JOptionPane.YES_OPTION) {
+            cj.setPontosSetTime1(0);
+            cj.setPontosSetTime2(0);
+
+            // Reseta a mão, geralmente para o jogador humano (índice 0) ou avança circularmente.
+            cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
+
+            SwingUtilities.invokeLater(() -> {
+                inicioPartida();
+            });
+
+        } else {
+            System.exit(0);
+        }
+    }
+
+
     private void iniciarTurnoComVerificacao() {
+
         cp.iniciarTurno();
 
         int indiceJogadorMao = cj.getIndiceJogadorMao();
@@ -84,20 +131,34 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        if (e.getComponent().getName() == null && e.getComponent() == this.painel.getLblModoRoubo()) {
-
-            // 1. Chama a lógica de Troca no Controller
-            executarModoRoubo();
-
-            return; // Sai do método após tratar o clique do botão
+        if (cj.isTrucoPendente()) {
+            if (e.getComponent() == this.painel.getLblPedirTruco()) {
+                executarRespostaTruco();
+            }
+            return;
         }
+
+        if (e.getComponent() == this.painel.getLblModoRoubo()) {
+            executarModoRoubo();
+            return;
+        }
+
+        if (e.getComponent() == this.painel.getLblPedirTruco()) {
+            executarPedirTruco();
+            return;
+        }
+
 
         int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
         int indiceInicial = cj.getIndiceJogadorMao();
 
-        int jogadorDaVezIndex = (indiceInicial - cartasJogadasNoTurno + 4) % 4;
+        int proximoAJogarIndex = indiceInicial;
+        for (int i = 0; i < cartasJogadasNoTurno; i++) {
+            proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
+        }
 
-        if (jogadorDaVezIndex != 0) return;
+        if (proximoAJogarIndex != 0) return;
+
 
         String name = e.getComponent().getName();
 
@@ -108,11 +169,11 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         List<Carta> cartasHumano = jogadorHumano.getMao();
         JLabel card = null;
 
-        if (name.equalsIgnoreCase(this.painel.getCard1().getName())) {
+        if (name != null && name.equalsIgnoreCase(this.painel.getCard1().getName())) {
             card = painel.getCard1();
-        } else if (name.equalsIgnoreCase(this.painel.getCard2().getName())) {
+        } else if (name != null && name.equalsIgnoreCase(this.painel.getCard2().getName())) {
             card = painel.getCard2();
-        } else if (name.equalsIgnoreCase(this.painel.getCard3().getName())) {
+        } else if (name != null && name.equalsIgnoreCase(this.painel.getCard3().getName())) {
             card = painel.getCard3();
         }
 
@@ -143,28 +204,77 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         }
     }
 
+    private void executarRespostaTruco() {
+        int valorAtual = cj.getValorAtualMao();
+        String mensagem = "Seu oponente pediu " + (valorAtual == 3 ? "TRUCO" : valorAtual) + ". Deseja aceitar?";
+
+        Object[] options = {"Aceitar", "Correr"};
+        int n = JOptionPane.showOptionDialog(this,
+                mensagem,
+                "Aposta Pendente",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (n == JOptionPane.YES_OPTION) {
+            cj.aceitarTruco();
+            iniciarFluxoPC();
+        } else {
+            // O jogador (Time 1) correu. Time 2 ganha a pontuação anterior.
+            cj.correrTruco(1);
+            SwingUtilities.invokeLater(() -> {
+                painel.limparMesa();
+                cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
+                inicioPartida();
+            });
+        }
+
+        removerCardMouseListener();
+        addCardMouseListener();
+    }
+
+
     private void executarModoRoubo() {
 
-        // 1. REMOVE O LISTENER para evitar cliques duplos enquanto processa
         removerCardMouseListener();
 
-        // 2. CHAMA O CONTROLLER PARA EXECUTAR A LÓGICA DO ROUBO (Busca e Troca)
         boolean sucesso = cj.aplicarModoRoubo();
 
-        // 3. ATUALIZAÇÃO DA VIEW
         if (sucesso) {
             SwingUtilities.invokeLater(() -> {
-                // Atualiza a mão do jogador para mostrar a nova carta
                 Jogador<Carta> jHumano = cj.getJogadorHumano();
                 if (jHumano != null) {
                     painel.atualizarMaoHumano(jHumano.getMao());
                 }
-                // Adiciona os listeners de volta (o jogador deve jogar a carta)
                 addCardMouseListener();
             });
         } else {
-            // Se falhou (ex: já usado), recoloca os listeners para o jogador continuar
             addCardMouseListener();
+        }
+    }
+
+    private void executarPedirTruco() {
+        removerCardMouseListener();
+
+        cj.pedirTruco();
+
+        if (cj.isTrucoPendente()) {
+            // Se Truco/Seis for pendente (PC pediu aumento ou Truco), mostra o pop-up
+            executarRespostaTruco();
+        } else {
+            // Se o PC aceitou (valorAtualMao=3) ou correu (valorAtualMao=1)
+            if (cj.getValorAtualMao() == 1) {
+                SwingUtilities.invokeLater(() -> {
+                    painel.limparMesa();
+                    cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
+                    inicioPartida();
+                });
+            } else {
+                // PC aceitou o Truco (valorAtualMao=3). O jogo continua normalmente.
+                SwingUtilities.invokeLater(() -> addCardMouseListener());
+            }
         }
     }
 
@@ -172,18 +282,17 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     private void iniciarFluxoPC() {
         new Thread(() -> {
             try {
+                if (cj.isTrucoPendente()) return;
+
                 List<Jogador<Carta>> jogadores = cj.getJogo().getJogadores();
 
                 int cartasJogadas = ct.getTurno().getCartasJogadas().size();
-
                 int indiceInicial = cj.getIndiceJogadorMao();
 
-                int proximoAJogarIndex;
-                if (cartasJogadas == 0) {
-                    proximoAJogarIndex = indiceInicial;
-                } else {
-                    int ultimoAJogarIndex = (indiceInicial - cartasJogadas + 1 + 4) % 4;
-                    proximoAJogarIndex = (ultimoAJogarIndex - 1 + 4) % 4;
+                int proximoAJogarIndex = indiceInicial;
+
+                for (int i = 0; i < cartasJogadas; i++) {
+                    proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
                 }
 
                 int jogadasRestantes = 4 - cartasJogadas;
@@ -200,6 +309,11 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                     cp.aplicarDelay(1);
 
                     simularJogadaPC(jogadorPC);
+
+                    if (cj.isTrucoPendente()) {
+                        SwingUtilities.invokeLater(() -> executarRespostaTruco());
+                        return;
+                    }
 
                     proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
                 }
@@ -219,7 +333,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         if (maoPC.isEmpty()) return;
 
         Carta cartaPCJogada = maoPC.get(0);
-        System.out.println("DEBUG: PC JOGANDO: " + jogadorPC.getNome() + " - Carta: " + cartaPCJogada.getValor());
+        System.out.println("PC JOGANDO: " + jogadorPC.getNome() + " - Carta: " + cartaPCJogada.getValor());
         ct.novaCartaJogada(jogadorPC, cartaPCJogada);
 
         SwingUtilities.invokeLater(() -> {
@@ -248,33 +362,37 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
         new Thread(() -> {
             try {
-                // FIM DA MÃO (MELHOR DE 3 RODADAS)
-                if (resultado == 10 || resultado == -10) {
-                    int vencedorMao = (resultado == 10) ? 1 : -1;
-                    cj.atualizarPlacarSet(1, vencedorMao);
+                if (resultado >= 10 || resultado <= -10) {
+                    int vencedorMao = (resultado >= 10) ? 1 : -1;
+
+                    cj.atualizarPlacarSet(cj.getValorAtualMao(), vencedorMao);
 
                     SwingUtilities.invokeLater(() -> {
-                        painel.atualizaPlacar(cj.getJogo().getPontosA(), cj.getJogo().getPontosB());
+                        painel.atualizaPlacar(cp.getTurnosGanhosTime1(), cp.getTurnosGanhosTime2());
                         painel.atualizaPlacarSet(cj.getPontosSetTime1(), cj.getPontosSetTime2());
+
+                        // CORREÇÃO FINAL: Checa o placar APÓS a atualização na View
+                        if (cj.getPontosSetTime1() >= 12) {
+                            fimDeJogo(1);
+                        } else if (cj.getPontosSetTime2() >= 12) {
+                            fimDeJogo(-1);
+                        } else {
+                            // Se não for Fim de Jogo, reinicia a rodada
+                            cp.aplicarDelay(3);
+                            painel.limparMesa();
+                            cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
+                            inicioPartida();
+                        }
                     });
 
-                    cp.aplicarDelay(3);
-
-                    SwingUtilities.invokeLater(() -> {
-                        painel.limparMesa(); // LIMPA A MESA FINALMENTE
-                        inicioPartida();
-                    });
                 }
-                // TURNO GANHO OU EMPATE (A MÃO CONTINUA)
                 else {
-
                     cj.getJogo().setPontosA(cp.getTurnosGanhosTime1());
                     cj.getJogo().setPontosB(cp.getTurnosGanhosTime2());
 
                     if (resultado != 0) {
                         CartaJogada cartaVencedora = encontrarCartaVencedora(cartasDoTurno, cp.getPartida().getManilha());
                         int vencedorIndex = cj.getJogo().getJogadores().indexOf(cartaVencedora.getJogador());
-                        // LINHA 275 CORRIGIDA: setIndiceJogadorMao está em ControlJogo
                         cj.setIndiceJogadorMao(vencedorIndex);
                     }
 
@@ -322,7 +440,8 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         this.painel.getCard1().removeMouseListener(this);
         this.painel.getCard2().removeMouseListener(this);
         this.painel.getCard3().removeMouseListener(this);
-        this.painel.getLblModoRoubo().removeMouseListener(this); // Listener do botão ROUBO removido
+        this.painel.getLblModoRoubo().removeMouseListener(this);
+        this.painel.getLblPedirTruco().removeMouseListener(this);
     }
 
     @Override public void mouseEntered(MouseEvent e) { }
