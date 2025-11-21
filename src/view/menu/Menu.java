@@ -28,16 +28,16 @@ public class Menu extends JFrame implements MouseListener, KeyListener {
 		this.painel.addKeyListener(this);
 		this.addKeyListener(this);
 
-		try {
-			mp = new MediaPlayer("/resource/music");
-			PlayerListener teste = new PlayerListener();
-			teste.setSujeito(mp);
-			mp.setListener(teste);
-			mp.run();
-		} catch (LineUnavailableException | IOException e) {
-
-			e.printStackTrace();
-		}
+//		try {
+//			mp = new MediaPlayer("/resource/music");
+//			PlayerListener teste = new PlayerListener();
+//			teste.setSujeito(mp);
+//			mp.setListener(teste);
+//			mp.run();
+//		} catch (LineUnavailableException | IOException e) {
+//
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
