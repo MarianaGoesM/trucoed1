@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import enumerated.Naipe;
 import enumerated.Valor;
@@ -17,13 +18,14 @@ public class ControlJogo {
     private Valor[] valores;
     private Naipe[] naipes;
     private Jogo jogo;
-    private ControlPartida cp;
+    private ControlPartida cp; // Usado para acessar a lógica de Truco (getForcaTruco)
 
-    // NOVO: Controle da ordem circular (quem joga primeiro)
-    private int indiceJogadorMao; // 0 a 3, índice do jogador que começa o turno/mão
-    // NOVO: Placar do SET (Truco Paulista: 12 pontos para ganhar o set)
+    // Controle da ordem circular (quem joga primeiro)
+    private int indiceJogadorMao;
+    // Placar do SET
     private int pontosSetTime1;
     private int pontosSetTime2;
+    private boolean modoRouboUsado;
 
     public ControlJogo(ControlPartida cp) {
         this.fabricaCarta = new CriadorCarta();
@@ -162,4 +164,13 @@ public class ControlJogo {
 
     public int getPontosSetTime1() { return pontosSetTime1; }
     public int getPontosSetTime2() { return pontosSetTime2; }
+
+
+    public boolean isModoRouboUsado() {
+        return modoRouboUsado;
+    }
+
+    public void setModoRouboUsado(boolean modoRouboUsado) {
+        this.modoRouboUsado = modoRouboUsado;
+    }
 }

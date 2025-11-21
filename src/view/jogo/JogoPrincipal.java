@@ -42,6 +42,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         this.painel.getCard1().addMouseListener(this);
         this.painel.getCard2().addMouseListener(this);
         this.painel.getCard3().addMouseListener(this);
+        this.painel.getLblModoRoubo().addMouseListener(this); // Listener do botão ROUBO adicionado
     }
 
     public void inicioPartida() {
@@ -82,6 +83,14 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+        if (e.getComponent().getName() == null && e.getComponent() == this.painel.getLblModoRoubo()) {
+
+            // 1. Chama a lógica de Troca no Controller
+            executarModoRoubo();
+
+            return; // Sai do método após tratar o clique do botão
+        }
 
         int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
         int indiceInicial = cj.getIndiceJogadorMao();
@@ -131,6 +140,31 @@ public class JogoPrincipal extends JFrame implements MouseListener {
             ct.novaCartaJogada(jogadorHumano, cartaJogadaJogador);
 
             iniciarFluxoPC();
+        }
+    }
+
+    private void executarModoRoubo() {
+
+        // 1. REMOVE O LISTENER para evitar cliques duplos enquanto processa
+        removerCardMouseListener();
+
+        // 2. CHAMA O CONTROLLER PARA EXECUTAR A LÓGICA DO ROUBO (Busca e Troca)
+        boolean sucesso = cj.aplicarModoRoubo();
+
+        // 3. ATUALIZAÇÃO DA VIEW
+        if (sucesso) {
+            SwingUtilities.invokeLater(() -> {
+                // Atualiza a mão do jogador para mostrar a nova carta
+                Jogador<Carta> jHumano = cj.getJogadorHumano();
+                if (jHumano != null) {
+                    painel.atualizarMaoHumano(jHumano.getMao());
+                }
+                // Adiciona os listeners de volta (o jogador deve jogar a carta)
+                addCardMouseListener();
+            });
+        } else {
+            // Se falhou (ex: já usado), recoloca os listeners para o jogador continuar
+            addCardMouseListener();
         }
     }
 
@@ -240,6 +274,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                     if (resultado != 0) {
                         CartaJogada cartaVencedora = encontrarCartaVencedora(cartasDoTurno, cp.getPartida().getManilha());
                         int vencedorIndex = cj.getJogo().getJogadores().indexOf(cartaVencedora.getJogador());
+                        // LINHA 275 CORRIGIDA: setIndiceJogadorMao está em ControlJogo
                         cj.setIndiceJogadorMao(vencedorIndex);
                     }
 
@@ -287,6 +322,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         this.painel.getCard1().removeMouseListener(this);
         this.painel.getCard2().removeMouseListener(this);
         this.painel.getCard3().removeMouseListener(this);
+        this.painel.getLblModoRoubo().removeMouseListener(this); // Listener do botão ROUBO removido
     }
 
     @Override public void mouseEntered(MouseEvent e) { }
