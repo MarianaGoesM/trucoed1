@@ -32,7 +32,6 @@ public class Baralho {
 
 
 	public void embaralhar() {
-		// Método para embaralhar a Pilha, movendo para uma Lista, embaralhando, e retornando
 		List<Carta> listaCartas = new ArrayList<>();
 
 		// Move da Pilha para a Lista
