@@ -15,11 +15,49 @@ public class Jogo {
     private int pontosB;
     private List<Partida> partidas;
     private Baralho b;
+    private Partida partidaAtual;
 
     public Jogo() {
 
         this.jogadores = new LinkedList<Jogador<Carta>>();
         this.partidas = new ArrayList<Partida>();
+    }
+
+
+    public void iniciarNovaPartida() {
+
+        this.partidaAtual = new Partida();
+        this.addPartida(this.partidaAtual);
+
+        if (this.b != null) {
+
+            // 1. Inicializa, Embaralha e Distribui
+            this.b.criarBaralho();
+            this.b.embaralhar();
+            this.b.distribuirCartas(this.jogadores);
+
+            // 2. Define a Vira e a Manilha na Partida
+            Carta vira = this.b.retirarVira();
+            this.partidaAtual.setManilha(vira);
+
+            // 3. CHAMA A ORDENAÇÃO
+            if (vira != null) {
+                this.partidaAtual.ordenarMaosDosJogadores(this.jogadores);
+                System.out.println("Mãos ordenadas para a nova partida (Vira: " + vira.getValor() + " de " + vira.getNaipe() + ").");
+            } else {
+                System.err.println("Erro: A manilha (vira) não foi definida, a ordenação não pode ser feita.");
+            }
+        } else {
+            System.err.println("Erro: O baralho (b) não foi inicializado.");
+        }
+    }
+
+    public Partida getPartidaAtual() {
+        return partidaAtual;
+    }
+
+    public void setPartidaAtual(Partida partidaAtual) {
+        this.partidaAtual = partidaAtual;
     }
 
 

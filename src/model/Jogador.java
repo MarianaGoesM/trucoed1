@@ -51,4 +51,20 @@ public abstract class Jogador<T> {
         this.time = time;
     }
 
+    public void ordenarMao(Carta vira) {
+        if (!this.mao.isEmpty() && this.mao.get(0) instanceof Carta) {
+
+            // 1. Cria a classe de Ordenacao, passando a "vira" da rodada
+            Ordenacao comparator = new Ordenacao(vira);
+
+            // 2. Ordena a lista de cartas
+            @SuppressWarnings("unchecked")
+            List<Carta> cartas = (List<Carta>) this.mao;
+
+            cartas.sort(comparator);
+        } else {
+            System.err.println("Erro: A mão do jogador não pode ser ordenada.");
+        }
+    }
+
 }

@@ -48,4 +48,22 @@ public class Partida {
 	public void setPontosDisputados(int pontosDisputados) {
 		this.pontosDisputados = pontosDisputados;
 	}
+
+	public void ordenarMaosDosJogadores(List<Jogador<Carta>> jogadores) {
+
+		// 1. Verifica se a manilha foi definida para esta partida
+		if (this.manilha == null) {
+			System.err.println("Erro de lógica: A manilha da partida não foi definida.");
+			return;
+		}
+
+		// 2. Itera sobre a lista de jogadores
+		for (Jogador<Carta> jogador : jogadores) {
+
+			// 3. Chama o método de ordenação (implementado na classe Jogador)
+			// Passamos a 'manilha' definida na Partida como referência.
+			// **IMPORTANTE**: A classe Jogador deve ter o método ordenarMao(Carta) implementado.
+			jogador.ordenarMao(this.manilha);
+		}
+	}
 }
