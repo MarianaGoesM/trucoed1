@@ -125,8 +125,8 @@ public class ControlJogo {
         this.valorAtualMao = 1;
         this.trucoPendente = false;
 
-        // NOVO PLACAR INICIAL PARA TESTES
-        this.pontosSetTime1 = 11;
+
+        this.pontosSetTime1 = 0;
         this.pontosSetTime2 = 0;
     }
 

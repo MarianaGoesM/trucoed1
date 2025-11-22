@@ -52,6 +52,8 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     public void inicioPartida() {
         this.i = 0;
 
+
+        this.painel.limparMesa();
         cp.novaPartida();
         cj.getJogo().addPartida(cp.getPartida());
         boolean tipoBaralho = cj.getJogo().getB() != null ? cj.getJogo().getB().isTipo() : false;
@@ -102,7 +104,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
             cj.setPontosSetTime1(0);
             cj.setPontosSetTime2(0);
 
-            // Reseta a mão, geralmente para o jogador humano (índice 0) ou avança circularmente.
+            // Reseta a mão
             cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
 
             SwingUtilities.invokeLater(() -> {
@@ -152,6 +154,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
         int indiceInicial = cj.getIndiceJogadorMao();
 
+        //fila encadeada circular
         int proximoAJogarIndex = indiceInicial;
         for (int i = 0; i < cartasJogadasNoTurno; i++) {
             proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
@@ -371,7 +374,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                         painel.atualizaPlacar(cp.getTurnosGanhosTime1(), cp.getTurnosGanhosTime2());
                         painel.atualizaPlacarSet(cj.getPontosSetTime1(), cj.getPontosSetTime2());
 
-                        // CORREÇÃO FINAL: Checa o placar APÓS a atualização na View
                         if (cj.getPontosSetTime1() >= 12) {
                             fimDeJogo(1);
                         } else if (cj.getPontosSetTime2() >= 12) {

@@ -28,8 +28,6 @@ public class ControlPartida {
 
     public void fimDeJogo(int vencedor) {
         // Esta função deve ser implementada na View (JogoPrincipal)
-        // Como o JogoPrincipal implementa a lógica do pop-up, faremos um System.out.println
-        // Aqui para sinalizar e evitar o erro "cannot resolve symbol".
         System.out.println("SINALIZADOR: FIM DE JOGO - Vencedor time " + (vencedor == 1 ? "1" : "2"));
     }
 
@@ -61,13 +59,9 @@ public class ControlPartida {
         int totalCartasPuxadas = 0;
 
         for (int i = 0; i < 3; i++) {
-            System.out.println("entrou for");
             for (Jogador<Carta> jo : j) {
-                System.out.println("teste");
                 try {
-                    System.out.println("quantidade antes de puxar: " + b.getCartas().size());
                     jo.addCarta(b.ComprarCarta());
-                    System.out.println("quantidade dps e puxar: " + b.getCartas().size());
                     totalCartasPuxadas++;
                 } catch (RuntimeException e) {
                     System.err.println("Erro ao distribuir carta (Mão): " + e.getMessage() + ". Cartas puxadas: " + totalCartasPuxadas);
@@ -79,12 +73,10 @@ public class ControlPartida {
         try {
             partida.setManilha(b.ComprarCarta());
             totalCartasPuxadas++;
-            System.out.println("foi a manilha: ");
         } catch (RuntimeException e) {
             System.err.println("Erro ao puxar a manilha: " + e.getMessage());
         }
 
-        System.out.println("Distribuição concluída. Total de cartas puxadas: 13");
     }
 
     public void embaralhar(Baralho b) {
@@ -107,8 +99,6 @@ public class ControlPartida {
         for (Carta c : listaParaEmbaralhar) {
             novaPilha.push(c);
         }
-        System.out.println("qnt cartas lista: " + listaParaEmbaralhar.size());
-        System.out.println("Cartas pilha: " + novaPilha.size());
     }
 
     private Valor getValorManilha(Carta manilhaVirada) {
@@ -121,15 +111,24 @@ public class ControlPartida {
         return valorManilha.getPesoTruco() * 10 + 4;
     }
 
+    /**
+     * Calcula a força universal da carta (Valor * 10 + Naipe), garantindo que não haja empates de força.
+     */
     public int getForcaTruco(Carta carta, Carta manilhaVirada) {
 
         Valor valorManilha = getValorManilha(manilhaVirada);
 
+        // Se a carta é uma Manilha (vira + 1 no valor do enum Valor)
         if (carta.getValor() == valorManilha) {
-            int forcaBase = 100;
+            // Força da Manilha (Base 200 + valor do Naipe)
+            // Isso garante que manilhas são mais fortes que a carta comum mais forte (Max Comum: 10 * 10 + 4 = 104)
+            int forcaBase = 200;
             return forcaBase + carta.getNaipe().getValor();
         }
 
+        // Se a carta é comum
+        // Força universal: Peso Truco * 10 + Valor do Naipe
+        // Isso implementa o desempate por naipe para TODAS as cartas comuns.
         return carta.getValor().getPesoTruco() * 10 + carta.getNaipe().getValor();
     }
 
@@ -143,11 +142,13 @@ public class ControlPartida {
         } else if (forcaC1 < forcaC2) {
             return -1;
         } else {
+            // Com a nova lógica em getForcaTruco, o empate (0) só ocorrerá se as cartas forem idênticas.
             return 0;
         }
     }
 
     public boolean IdentificarSeZap(Carta carta, Carta manilha) {
+        // O Zap é o Naipe de valor 4 (ZAP) e Valor é o próximo da Vira
         if (carta.getValor().getValor() == manilha.getValor().getValor() + 1 && carta.getNaipe().getValor() == 4) {
             return true;
         } else {
@@ -172,8 +173,8 @@ public class ControlPartida {
         Carta manilhaVirada = partida.getManilha();
 
         for (Carta carta : pc1.getMao()) {
-            int forca = getForcaTruco(carta, manilhaVirada);
-            if (forca >= Valor.TRES.getPesoTruco() * 10) {
+            // Verifica se tem uma carta forte (3 ou manilha)
+            if (carta.getValor().getPesoTruco() >= Valor.TRES.getPesoTruco()) {
                 return true;
             }
         }
