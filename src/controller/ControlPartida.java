@@ -8,6 +8,8 @@ import model.*;
 import enumerated.Valor; // Importe necessário para usar o enum Valor
 import model.Carta;
 
+import util.GerenciadorTxt;
+
 public class ControlPartida {
 
     private ControlTurno ct;
@@ -181,12 +183,22 @@ public class ControlPartida {
             }
         }
 
-        if (empate) {
+        if (empate){
             ct.getTurno().setMelado(true);
+
+            // --- REGISTRO DE EMPATE ---
+            GerenciadorTxt.registrarJogada("RESULTADO: EMPATE (Melado).");
+            // --------------------------
+
             return 0;
         }
 
         int vencedorTurno = cartaVencedora.getJogador().getTime() == 1 ? 1 : -1;
+
+        // --- REGISTRO DE VITÓRIA NO TURNO ---
+        String nomeVencedor = cartaVencedora.getJogador().getNome();
+        GerenciadorTxt.registrarJogada("RESULTADO: Vencedor do turno: " + nomeVencedor + " (Time " + vencedorTurno + ")");
+        // ------------------------------------
 
         return pontuarMao(vencedorTurno);
     }
@@ -232,6 +244,25 @@ public class ControlPartida {
             e.printStackTrace();
         }
 
+    }
+
+    public void registrarCartasJogadas(List<CartaJogada> cartasJogadas) {
+        if (cartasJogadas == null || cartasJogadas.isEmpty()) {
+            return;
+        }
+
+        // Registra a jogada de cada jogador
+        for (CartaJogada cj : cartasJogadas) {
+            // Formata a mensagem de forma clara
+            String linhaLog = String.format("JOGADA: Jogador %s (Time %d) jogou: %s de %s",
+                    cj.getJogador().getNome(),
+                    cj.getJogador().getTime(),
+                    cj.getCarta().getValor().toString(),
+                    cj.getCarta().getNaipe().toString()
+            );
+            // Chama a classe estática para escrever no arquivo
+            GerenciadorTxt.registrarJogada(linhaLog);
+        }
     }
 
     public void jogadaJogador() {

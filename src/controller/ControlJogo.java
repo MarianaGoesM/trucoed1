@@ -12,6 +12,7 @@ import model.CriadorPessoa;
 import model.Jogador;
 import model.Jogo;
 import model.Pessoa;
+import util.GerenciadorTxt;
 
 public class ControlJogo {
     private CriadorCarta fabricaCarta;
@@ -112,6 +113,8 @@ public class ControlJogo {
         cp.novaPartida();
         this.jogo.addPartida(cp.getPartida());
         this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
+
+        GerenciadorTxt.iniciarNovoLog();
     }
 
     /**
