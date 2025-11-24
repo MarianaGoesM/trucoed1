@@ -12,6 +12,7 @@ import model.CriadorPessoa;
 import model.Jogador;
 import model.Jogo;
 import model.Pessoa;
+import util.GerenciadorTxt;
 
 public class ControlJogo {
     private CriadorCarta fabricaCarta;
@@ -129,6 +130,9 @@ public class ControlJogo {
 
         this.pontosSetTime1 = 0;
         this.pontosSetTime2 = 0;
+        this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
+
+        GerenciadorTxt.iniciarNovoLog();
     }
 
     public boolean aplicarModoRoubo() {
