@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Partida {
-	private Jogador vencedor;
+
+	private Jogador<Carta> vencedor;
 	private int pontosDisputados;
 	private List<Turno> turnos;
 	private Carta manilha;
 
 	public Partida() {
-		this.turnos = new ArrayList<Turno>();
+		this.turnos = new ArrayList<>();
 	}
 
 	public Carta getManilha() {
@@ -33,11 +34,11 @@ public class Partida {
 		this.turnos = turnos;
 	}
 
-	public Jogador getVencedor() {
+	public Jogador<Carta> getVencedor() {
 		return vencedor;
 	}
 
-	public void setVencedor(Jogador vencedor) {
+	public void setVencedor(Jogador<Carta> vencedor) {
 		this.vencedor = vencedor;
 	}
 
@@ -47,5 +48,22 @@ public class Partida {
 
 	public void setPontosDisputados(int pontosDisputados) {
 		this.pontosDisputados = pontosDisputados;
+	}
+
+
+	public void ordenarMaosDosJogadores(List<Jogador<Carta>> jogadores) {
+
+		// 1. Verifica se a manilha foi definida para esta partida
+		if (this.manilha == null) {
+			System.err.println("Erro de lógica: A manilha da partida não foi definida.");
+			return;
+		}
+
+		// 2. Itera sobre a lista de jogadores e chama a ordenação
+		for (Jogador<Carta> jogador : jogadores) {
+
+			// Requer a implementação do método ordenarMao(Carta) em Jogador.java
+			jogador.ordenarMao(this.manilha);
+		}
 	}
 }
