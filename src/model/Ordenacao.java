@@ -44,7 +44,7 @@ public class Ordenacao implements Comparator<Carta> {
                     power += 3;
                 } else if (c.getNaipe() == Naipe.COPAS) { // Manilha COPAS
                     power += 2;
-                } else if (c.getNaipe() == Naipe.PICAFUMO) { // Manilha PICAFUMO (correspondente ao Ouros/Diamonds)
+                } else if (c.getNaipe() == Naipe.OURO) { // Manilha PICAFUMO (correspondente ao Ouros/Diamonds)
                     power += 1;
                 }
             }

@@ -1,8 +1,10 @@
 package view.jogo;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.net.URL;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,6 +16,20 @@ import model.Carta;
 import model.Jogador;
 
 public class PainelJogo extends JPanel {
+
+    // --- CONSTANTES DE TAMANHO DAS CARTAS ---
+    // PLAYER (Mantido o tamanho grande: 151x216)
+    private static final int PLAYER_CARD_WIDTH = 151;
+    private static final int PLAYER_CARD_HEIGHT = 216;
+
+    // PCs (Aumentado um pouco: 100x140)
+    private static final int PC_CARD_WIDTH = 100;
+    private static final int PC_CARD_HEIGHT = 140;
+
+    // MANILHA (Diminuído um pouco: 120x170)
+    private static final int MANILHA_CARD_WIDTH = 120;
+    private static final int MANILHA_CARD_HEIGHT = 170;
+    // ----------------------------------------
 
     private JLabel card[];
     private JLabel cartaMesa;
@@ -36,12 +52,50 @@ public class PainelJogo extends JPanel {
     private JLabel lblPedirTruco;
     private ImageIcon iconPedirTruco;
     private JLabel lblModoRoubo;
-    protected ImageIcon cardCostasGrande = new ImageIcon(
-            this.getClass().getResource("/resource/img/cenario/carta-costas grande.png"));
-    protected ImageIcon cardCostas = new ImageIcon(
-            this.getClass().getResource("/resource/img/cenario/carta-costas.png"));
+
+    // Icones de costas, carregados e redimensionados na inicialização
+    protected ImageIcon cardCostasManilha;
+    protected ImageIcon cardCostasPC;
+
+    // --- MÉTODO AUXILIAR PARA REDIMENSIONAMENTO E TRATAMENTO DE ERRO (NPE) ---
+    private ImageIcon createResizedIcon(String path, int width, int height) {
+        URL location = this.getClass().getResource(path);
+
+        if (location == null) {
+            System.err.println("ERRO: Recurso não encontrado no caminho: " + path);
+            return null;
+        }
+
+        try {
+            ImageIcon iconeOriginal = new ImageIcon(location);
+            Image imagem = iconeOriginal.getImage();
+
+            Image imagemRedimensionada = imagem.getScaledInstance(
+                    width,
+                    height,
+                    Image.SCALE_SMOOTH
+            );
+            return new ImageIcon(imagemRedimensionada);
+        } catch (Exception e) {
+            System.err.println("Erro ao redimensionar a imagem: " + path);
+            return null;
+        }
+    }
+    // ------------------------------------------------------------------------
 
     public PainelJogo() {
+        // Carrega os ícones de costas para PC e Manilha nos novos tamanhos
+        this.cardCostasPC = createResizedIcon("/resource/img/cenario/carta-costas.png", PC_CARD_WIDTH, PC_CARD_HEIGHT);
+        this.cardCostasManilha = createResizedIcon("/resource/img/cenario/carta-costas.png", MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
+
+        // Fallback simples para evitar NPE se o recurso falhar
+        if (this.cardCostasPC == null) {
+            this.cardCostasPC = new ImageIcon(this.getClass().getResource("/resource/img/cenario/carta-costas.png"));
+        }
+        if (this.cardCostasManilha == null) {
+            this.cardCostasManilha = new ImageIcon(this.getClass().getResource("/resource/img/cenario/carta-costas.png"));
+        }
+
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(null);
 
@@ -52,69 +106,72 @@ public class PainelJogo extends JPanel {
 
         this.manilha = new JLabel();
         this.manilha.setName("manilha");
-        this.manilha.setBounds(399, 247, 73, 100);
-        this.manilha.setIcon(new ImageIcon(this.getClass().getResource("/resource/img/cenario/carta-costas.png")));
+        // POSICIONAMENTO DA MANILHA AJUSTADO (Tamanho 120x170)
+        this.manilha.setBounds(390, 280, MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
+        this.manilha.setIcon(cardCostasManilha); // Usa o ícone redimensionado para manilha
         this.add(manilha);
 
         this.cartaMesa = new JLabel();
-        this.cartaMesa.setBounds(424, 356, 73, 100);
+        // CARTA JOGADA PELO HUMANO NA MESA (Tamanho 151x216)
+        this.cartaMesa.setBounds(550, 420, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
         this.cartaMesa.setVisible(false);
 
         this.cartaPc = new JLabel();
-        cartaPc.setIcon(cardCostas);
-        this.cartaPc.setBounds( 424, 138, 73, 100);
+        // CARTA DO PC DE CIMA (Tamanho 100x140)
+        cartaPc.setIcon(cardCostasPC);
+        this.cartaPc.setBounds( 550, 100, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.cartaPc.setVisible(true);
         this.add(cartaMesa);
         this.add(cartaPc);
 
         this.cardParceiro = new JLabel();
-        cardParceiro.setIcon(cardCostas);
-        this.cardParceiro.setBounds(200, 247, 73, 100);
+        // CARTA DO PC PARCEIRO ESQUERDA (Tamanho 100x140)
+        cardParceiro.setIcon(cardCostasPC);
+        this.cardParceiro.setBounds(250, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.add(cardParceiro);
 
         this.cardPCLateral = new JLabel();
-        cardPCLateral.setIcon(cardCostas);
-        this.cardPCLateral.setBounds(650, 247, 73, 100);
+        // CARTA DO PC OPONENTE DIREITA (Tamanho 100x140)
+        cardPCLateral.setIcon(cardCostasPC);
+        this.cardPCLateral.setBounds(850, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.add(cardPCLateral);
 
 
+        // --- LABELS E PLACAR (POSIÇÕES MANTIDAS/AJUSTADAS PARA TELA GRANDE) ---
         lblNomeJogador = new JLabel();
         lblNomeJogador.setFont(new Font("Showcard Gothic", Font.BOLD, 20));
-        lblNomeJogador.setBounds(33, 492, 812, 48);
+        lblNomeJogador.setBounds(500, 700, 200, 48);
         this.add(lblNomeJogador);
 
         lblNomePCParceiro = new JLabel("Parceiro");
         lblNomePCParceiro.setFont(new Font("Showcard Gothic", Font.BOLD, 14));
-        lblNomePCParceiro.setBounds(150, 200, 100, 20);
+        lblNomePCParceiro.setBounds(250, 150, 100, 20);
         this.add(lblNomePCParceiro);
 
         lblNomePCLateral = new JLabel("Oponente");
         lblNomePCLateral.setFont(new Font("Showcard Gothic", Font.BOLD, 14));
-        lblNomePCLateral.setBounds(700, 200, 100, 20);
+        lblNomePCLateral.setBounds(850, 150, 100, 20);
         this.add(lblNomePCLateral);
 
-
         placar = new JLabel();
-        placar.setBounds(196, 13, 649, 40);
+        placar.setBounds(30, 13, 300, 40);
         placar.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 42));
         this.add(placar);
 
         placarSet = new JLabel("Set: 0 X 0");
-        placarSet.setBounds(196, 50, 649, 40);
+        placarSet.setBounds(30, 50, 300, 40);
         placarSet.setFont(new Font("Showcard Gothic", Font.BOLD, 20));
         this.add(placarSet);
 
-
         lblPedirTruco = new JLabel("TRUCO");
         lblPedirTruco.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblPedirTruco.setBounds(706, 300, 188, 104);
+        lblPedirTruco.setBounds(950, 300, 188, 104);
         this.add(lblPedirTruco);
 
         lblModoRoubo = new JLabel("ROUBO");
         lblModoRoubo.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblModoRoubo.setBounds(706, 380, 188, 104);
+        lblModoRoubo.setBounds(950, 380, 188, 104);
         this.add(lblModoRoubo);
-
     }
 
     public void paintComponent(Graphics g) {
@@ -122,12 +179,11 @@ public class PainelJogo extends JPanel {
 
         Image background = new ImageIcon(getClass().getResource("/resource/img/cenario/fundo-mesa-menor.jpg"))
                 .getImage();
-        g.drawImage(background, 0, 0, this);
-
+        g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
     }
 
     public void criarTela(List<Jogador<Carta>> jogadores) {
-
+        // ... (Corpo da função mantido, apenas o setIconePequeno mudou) ...
         if (jogadores == null || jogadores.size() < 4) {
             System.err.println("ERRO: Número de jogadores insuficiente para criar a tela 2x2.");
             return;
@@ -141,8 +197,7 @@ public class PainelJogo extends JPanel {
             return;
         }
 
-
-        int x = 256;
+        int x = 360;
         List<Carta> mao = jHumano.getMao();
 
         for (JLabel c : card) {
@@ -162,7 +217,7 @@ public class PainelJogo extends JPanel {
 
             configLabel(card[i]);
 
-            x += 175;
+            x += 160;
         }
 
         for (int i = mao.size(); i < 3; i++) {
@@ -172,109 +227,162 @@ public class PainelJogo extends JPanel {
         lblNomePCParceiro.setText(jogadores.get(2).getNome());
         lblNomePCLateral.setText(jogadores.get(3).getNome());
         cartaPc.setName(jogadores.get(2).getNome());
-
     }
-
 
     public void configLabel(JLabel card) {
         card.setVisible(true);
         this.add(card);
     }
 
+    /**
+     * Define o ícone da carta do JOGADOR HUMANO, mantendo o tamanho 151x216.
+     */
     public void setIconePequeno(JLabel card, String naipe, String valor, int x) {
-        ImageIcon icone = new ImageIcon(
-                this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
-        card.setBounds(x, 400, 150, 200);
+        System.out.println(naipe + " " + valor + " de " + naipe.toLowerCase() + ".jpg");
+
+        String path = "/resource/img/baralho/" + naipe.toLowerCase() + "/" + valor + " de " + naipe.toLowerCase() + ".jpg";
+
+        // Redimensiona para o tamanho do PLAYER (151x216)
+        ImageIcon icone = createResizedIcon(path, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+
+        if(icone == null){
+            // Fallback usando o ícone de costas do PC como um placeholder
+            icone = cardCostasPC;
+        }
+
+        // Posição para as cartas do PLAYER
+        card.setBounds(x, 500, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
         card.setIcon(icone);
     }
 
+    /**
+     * Usado para virar a carta do humano na mesa (tamanho 151x216).
+     */
     public void setIconeGrande(JLabel card, String naipe, String valor) {
+        String naipeLower = naipe.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valor + " de " + naipeLower + ".jpg";
+        ImageIcon icone = createResizedIcon(path, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
 
-        ImageIcon icone = new ImageIcon(this.getClass()
-                .getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + "-grande.jpg"));
-        card.setBounds(card.getX(), card.getY() - 50, card.getWidth(), card.getHeight());
-        card.setIcon(icone);
+        if (icone != null) {
+            card.setBounds(card.getX(), card.getY() - 50, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+            card.setIcon(icone);
+        }
     }
 
+    /**
+     * Usado para limpar a mesa ou retornar cartas à mão de costas.
+     * Usa o ícone de costas do PLAYER (151x216) para a mão humana, ou o de PC (100x140) para a mesa.
+     */
     public void setIconePequeno(JLabel card) {
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/cenario/carta-costas.png"));
-        if (card.getName().equals("card1"))
-            card.setBounds(290, 462, 73, 100);
-        else if (card.getName().equals("card2"))
-            card.setBounds(426, 462, 73, 100);
-        else if (card.getName().equals("card3"))
-            card.setBounds(576, 462, 73, 100);
-        card.setIcon(cardCostas);
+        // Se for uma das cartas na mão, usa o tamanho do PLAYER
+        if (card.getName() != null && card.getName().contains("carta")) {
+            ImageIcon playerCostas = createResizedIcon("/resource/img/cenario/carta-costas.png", PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+            card.setIcon(playerCostas != null ? playerCostas : cardCostasPC);
+
+            // Reposicionamento da mão humana (apenas para fallback, a criaçãoTela faz o correto)
+            if (card.getName().contains("carta0"))
+                card.setBounds(360, 500, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+            else if (card.getName().contains("carta1"))
+                card.setBounds(520, 500, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+            else if (card.getName().contains("carta2"))
+                card.setBounds(680, 500, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+        } else {
+            // Se for usado para cartas na mesa (com nomes card1/card2/card3 - DEVE USAR TAMANHO DO PC)
+            card.setIcon(cardCostasPC);
+            if (card.getName().equals("card1"))
+                card.setBounds(290, 462, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+            else if (card.getName().equals("card2"))
+                card.setBounds(426, 462, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+            else if (card.getName().equals("card3"))
+                card.setBounds(576, 462, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+        }
     }
 
-    public void atualizaPlacar(int pontosTime1, int pontosTime2) {
-        placar.setText("Mão: " + pontosTime1 + " X " + pontosTime2);
-        this.placar.repaint();
-    }
-
-    public void atualizaPlacarSet(int pontosSetTime1, int pontosSetTime2) {
-        placarSet.setText("Set: " + pontosSetTime1 + " X " + pontosSetTime2);
-        placarSet.repaint();
-    }
+    // --- Outros métodos com ajustes de posicionamento/tamanho ---
 
     public void limparMesa() {
         cartaMesa.setVisible(false);
-        cartaPc.setIcon(cardCostas);
-        cardParceiro.setIcon(cardCostas);
-        cardPCLateral.setIcon(cardCostas);
-
-
-
+        // Usa o ícone de costas do PC (100x140)
+        cartaPc.setIcon(cardCostasPC);
+        cardParceiro.setIcon(cardCostasPC);
+        cardPCLateral.setIcon(cardCostasPC);
         this.repaint();
     }
 
     public void moverCardParaMesa(JLabel card) {
         this.setIconePequeno(card);
-        card.setBounds(424, 356, 73, 100);
+        // Move para a posição da carta do humano na mesa (usando o tamanho do PC como placeholder)
+        card.setBounds(550, 420, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         if (card.getMouseListeners().length > 0) {
             card.removeMouseListener(card.getMouseListeners()[0]);
         }
     }
 
+    // Vira a carta do humano na mesa (Tamanho 151x216)
     public void moverCardParaMesa(JLabel card, String naipe, String valor) {
-        cartaMesa.setIcon(new ImageIcon(
-                this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg")));
-        cartaMesa.setVisible(true);
+        String naipeLower = naipe.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valor + " de " + naipeLower + ".jpg";
+        ImageIcon icone = createResizedIcon(path, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+
+        if (icone != null) {
+            cartaMesa.setIcon(icone);
+            cartaMesa.setBounds(550, 420, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+            cartaMesa.setVisible(true);
+        }
         card.setVisible(false);
         if (card.getMouseListeners().length > 0) {
             card.removeMouseListener(card.getMouseListeners()[0]);
         }
     }
 
+    // Vira a carta do PC de cima (Tamanho 100x140)
     public void viraCartaPc(String naipe, String valor){
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valorLower + " de " + naipeLower + ".jpg";
 
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
-        this.cartaPc.setIcon(icone);
-        this.setVisible(true);
+        ImageIcon icone = createResizedIcon(path, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+
+        if (icone != null) {
+            this.cartaPc.setIcon(icone);
+            this.cartaPc.setBounds( 550, 100, PC_CARD_WIDTH, PC_CARD_HEIGHT); // Garante a posição
+            this.cartaPc.setVisible(true);
+        }
     }
 
+    // Vira a carta do PC Parceiro (Tamanho 100x140)
     public void viraCartaPCSide1(String naipe, String valor){
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valorLower + " de " + naipeLower + ".jpg";
 
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
-        this.cardParceiro.setIcon(icone);
-        this.cardParceiro.setVisible(true);
+        ImageIcon icone = createResizedIcon(path, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+
+        if (icone != null) {
+            this.cardParceiro.setIcon(icone);
+            this.cardParceiro.setBounds(250, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+            this.cardParceiro.setVisible(true);
+        }
     }
 
+    // Vira a carta do PC Oponente (Tamanho 100x140)
     public void viraCartaPCSide2(String naipe, String valor){
         String naipeLower = naipe.toLowerCase();
         String valorLower = valor.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valorLower + " de " + naipeLower + ".jpg";
 
-        ImageIcon icone = new ImageIcon(this.getClass().getResource("/resource/img/baralho/" + naipeLower + "/" + valorLower + "-de-" + naipeLower + ".jpg"));
-        this.cardPCLateral.setIcon(icone);
-        this.cardPCLateral.setVisible(true);
+        ImageIcon icone = createResizedIcon(path, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+
+        if (icone != null) {
+            this.cardPCLateral.setIcon(icone);
+            this.cardPCLateral.setBounds(850, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
+            this.cardPCLateral.setVisible(true);
+        }
     }
 
     public void atualizarMaoHumano(List<Carta> mao) {
-        int x = 256;
+        // ... (Corpo da função mantido, chama setIconePequeno que usa 151x216) ...
+        int x = 360;
 
         for (JLabel c : card) {
             c.setVisible(false);
@@ -292,7 +400,7 @@ public class PainelJogo extends JPanel {
 
             currentCardLabel.setVisible(true);
 
-            x += 175;
+            x += 160;
         }
 
         this.repaint();
@@ -316,11 +424,21 @@ public class PainelJogo extends JPanel {
     }
 
 
+    /**
+     * Define a manilha no tamanho menor (120x170).
+     */
     public void setManilha(String naipe, String valor) {
-        ImageIcon icone = new ImageIcon(
-                this.getClass().getResource("/resource/img/baralho/" + naipe + "/" + valor + "-de-" + naipe + ".jpg"));
-        this.manilha.setIcon(icone);
+        String naipeLower = naipe.toLowerCase();
+        String path = "/resource/img/baralho/" + naipeLower + "/" + valor + " de " + naipeLower + ".jpg";
+        ImageIcon icone = createResizedIcon(path, MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
+
+        if (icone != null) {
+            this.manilha.setIcon(icone);
+            this.manilha.setBounds(390, 280, MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
+        }
     }
+
+    // ... (Demais Getters e Setters mantidos) ...
 
     public JLabel getCartaPc() {
         return cartaPc;
@@ -443,19 +561,19 @@ public class PainelJogo extends JPanel {
     }
 
     public ImageIcon getCardCostasGrande() {
-        return cardCostasGrande;
+        return cardCostasManilha; // Usando Manilha como "Grande" de referência
     }
 
     public void setCardCostasGrande(ImageIcon cardCostasGrande) {
-        this.cardCostasGrande = cardCostasGrande;
+        this.cardCostasManilha = cardCostasGrande;
     }
 
     public ImageIcon getCardCostas() {
-        return cardCostas;
+        return cardCostasPC; // Usando PC como "Costas" de referência
     }
 
     public void setCardCostas(ImageIcon cardCostas) {
-        this.cardCostas = cardCostas;
+        this.cardCostasPC = cardCostas;
     }
 
     public JLabel getCard1() {
@@ -492,5 +610,15 @@ public class PainelJogo extends JPanel {
 
     public String getNomeJogador() {
         return lblNomeJogador.getText();
+    }
+
+    public void atualizaPlacar(int pontosTime1, int pontosTime2) {
+        placar.setText("Mão: " + pontosTime1 + " X " + pontosTime2);
+        this.placar.repaint();
+    }
+
+    public void atualizaPlacarSet(int pontosSetTime1, int pontosSetTime2) {
+        placarSet.setText("Set: " + pontosSetTime1 + " X " + pontosSetTime2);
+        placarSet.repaint();
     }
 }

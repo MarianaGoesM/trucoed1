@@ -1,198 +1,23 @@
---- NOVO JOGO INICIADO: 2025-11-21T19:16:25.279773526 ---
-JOGADA: Jogador dsds (Time 1) jogou: J de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: QUATRO de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: SETE de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de ZAP
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: A de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: SEIS de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: CINCO de ESPADILHA
+--- NOVO JOGO INICIADO: 2025-11-24T16:16:19.626227 ---
+JOGADA: Jogador asda (Time 1) jogou: SEIS de OURO
+JOGADA: Jogador Computador2 (Time 2) jogou: J de COPAS
+JOGADA: Jogador Computador1 (Time 1) jogou: Q de ZAP
+JOGADA: Jogador Computador0 (Time 2) jogou: SETE de COPAS
 RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: SETE de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: K de COPAS
+JOGADA: Jogador Computador2 (Time 2) jogou: J de ZAP
+JOGADA: Jogador Computador1 (Time 1) jogou: TRES de ESPADILHA
 JOGADA: Jogador Computador0 (Time 2) jogou: SETE de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: K de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: DOIS de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: TRES de PICAFUMO
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: Q de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: Q de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: J de ESPADILHA
-JOGADA: Jogador dsds (Time 1) jogou: A de COPAS
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: A de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: DOIS de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: K de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: A de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: A de PICAFUMO
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: J de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: QUATRO de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: SEIS de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: DOIS de PICAFUMO
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: SETE de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: SETE de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: TRES de PICAFUMO
+JOGADA: Jogador asda (Time 1) jogou: SEIS de ESPADILHA
 RESULTADO: Vencedor do turno: Computador1 (Time 1)
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de ESPADILHA
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: K de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: J de ZAP
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: A de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: Q de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: SETE de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: K de PICAFUMO
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: CINCO de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: A de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: SETE de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de COPAS
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: CINCO de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: SETE de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: J de COPAS
+JOGADA: Jogador Computador1 (Time 1) jogou: SEIS de COPAS
+JOGADA: Jogador Computador0 (Time 2) jogou: Q de OURO
+JOGADA: Jogador asda (Time 1) jogou: K de ESPADILHA
+JOGADA: Jogador Computador2 (Time 2) jogou: A de OURO
 RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: J de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: SEIS de ZAP
-JOGADA: Jogador Computador0 (Time 2) jogou: DOIS de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: SEIS de PICAFUMO
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: K de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: TRES de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: K de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: K de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: DOIS de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: SETE de PICAFUMO
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: A de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: CINCO de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: A de COPAS
-RESULTADO: Vencedor do turno: Computador1 (Time 1)
-JOGADA: Jogador Computador1 (Time 1) jogou: J de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: J de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: SEIS de PICAFUMO
-RESULTADO: Vencedor do turno: Computador1 (Time 1)
-JOGADA: Jogador Computador1 (Time 1) jogou: J de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: TRES de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: CINCO de PICAFUMO
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: K de PICAFUMO
-JOGADA: Jogador Computador2 (Time 2) jogou: K de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de ZAP
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de ESPADILHA
-RESULTADO: EMPATE (Melado).
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: A de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: J de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de COPAS
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: K de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: Q de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: K de ZAP
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de PICAFUMO
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: CINCO de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: QUATRO de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: Q de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: K de ESPADILHA
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: A de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: SETE de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de PICAFUMO
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: A de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: TRES de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: SEIS de ESPADILHA
+JOGADA: Jogador Computador2 (Time 2) jogou: Q de OURO
+JOGADA: Jogador Computador1 (Time 1) jogou: DOIS de ZAP
+JOGADA: Jogador Computador0 (Time 2) jogou: QUATRO de OURO
+JOGADA: Jogador asda (Time 1) jogou: SETE de OURO
 RESULTADO: Vencedor do turno: Computador1 (Time 1)
 JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: SEIS de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: K de COPAS
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador Computador1 (Time 1) jogou: QUATRO de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: K de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: K de COPAS
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: QUATRO de PICAFUMO
-JOGADA: Jogador Computador2 (Time 2) jogou: SETE de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de ESPADILHA
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de COPAS
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de ESPADILHA
-JOGADA: Jogador dsds (Time 1) jogou: QUATRO de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: Q de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: A de ZAP
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: A de ESPADILHA
-JOGADA: Jogador dsds (Time 1) jogou: SEIS de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: A de ZAP
-JOGADA: Jogador Computador1 (Time 1) jogou: K de ZAP
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: SETE de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: DOIS de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: DOIS de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: J de ESPADILHA
-RESULTADO: EMPATE (Melado).
-JOGADA: Jogador Computador0 (Time 2) jogou: Q de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: SEIS de PICAFUMO
-JOGADA: Jogador Computador2 (Time 2) jogou: J de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de PICAFUMO
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: CINCO de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: SETE de COPAS
-JOGADA: Jogador Computador2 (Time 2) jogou: SEIS de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: K de COPAS
-RESULTADO: Vencedor do turno: Computador1 (Time 1)
-JOGADA: Jogador Computador1 (Time 1) jogou: J de ZAP
-JOGADA: Jogador Computador0 (Time 2) jogou: A de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: SETE de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: A de PICAFUMO
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: QUATRO de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: CINCO de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: TRES de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: QUATRO de COPAS
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: CINCO de ZAP
-JOGADA: Jogador dsds (Time 1) jogou: SETE de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: J de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: QUATRO de PICAFUMO
-RESULTADO: Vencedor do turno: Computador2 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: SEIS de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: CINCO de PICAFUMO
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de ESPADILHA
-JOGADA: Jogador dsds (Time 1) jogou: SETE de PICAFUMO
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador2 (Time 2) jogou: Q de COPAS
-JOGADA: Jogador Computador1 (Time 1) jogou: J de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: QUATRO de PICAFUMO
-JOGADA: Jogador dsds (Time 1) jogou: K de ZAP
-RESULTADO: Vencedor do turno: dsds (Time 1)
-JOGADA: Jogador dsds (Time 1) jogou: A de ESPADILHA
-JOGADA: Jogador Computador2 (Time 2) jogou: A de PICAFUMO
-JOGADA: Jogador Computador1 (Time 1) jogou: DOIS de COPAS
-JOGADA: Jogador Computador0 (Time 2) jogou: SETE de ESPADILHA
-RESULTADO: Vencedor do turno: Computador0 (Time -1)
-JOGADA: Jogador Computador0 (Time 2) jogou: TRES de COPAS
-JOGADA: Jogador dsds (Time 1) jogou: TRES de ZAP
-JOGADA: Jogador Computador2 (Time 2) jogou: CINCO de ESPADILHA
-JOGADA: Jogador Computador1 (Time 1) jogou: J de ZAP
-RESULTADO: EMPATE (Melado).
+JOGADA: Jogador Computador0 (Time 2) jogou: SETE de COPAS

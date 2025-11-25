@@ -32,7 +32,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
         cj.iniciaJogo(nome, tipo, n);
 
-        this.setSize(900, 600);
+        this.setSize(1200, 800);
         this.setResizable(false);
 
         painel = new PainelJogo();
