@@ -1,5 +1,6 @@
 package view.jogo;
 
+import java.awt.Color; // Import adicionado
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -19,16 +20,16 @@ public class PainelJogo extends JPanel {
 
     // --- CONSTANTES DE TAMANHO DAS CARTAS ---
     // PLAYER (Mantido o tamanho grande: 151x216)
-    private static final int PLAYER_CARD_WIDTH = 151;
-    private static final int PLAYER_CARD_HEIGHT = 216;
+    private static final int PLAYER_CARD_WIDTH = 120;
+    private static final int PLAYER_CARD_HEIGHT = 170;
 
     // PCs (Aumentado um pouco: 100x140)
     private static final int PC_CARD_WIDTH = 100;
     private static final int PC_CARD_HEIGHT = 140;
 
     // MANILHA (Diminuído um pouco: 120x170)
-    private static final int MANILHA_CARD_WIDTH = 120;
-    private static final int MANILHA_CARD_HEIGHT = 170;
+    private static final int MANILHA_CARD_WIDTH = 100;
+    private static final int MANILHA_CARD_HEIGHT = 140;
     // ----------------------------------------
 
     private JLabel card[];
@@ -105,18 +106,15 @@ public class PainelJogo extends JPanel {
 
         this.manilha = new JLabel();
         this.manilha.setName("manilha");
-        // POSICIONAMENTO DA MANILHA AJUSTADO (Tamanho 120x170)
         this.manilha.setBounds(390, 280, MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
         this.manilha.setIcon(cardCostasManilha); // Usa o ícone redimensionado para manilha
         this.add(manilha);
 
         this.cartaMesa = new JLabel();
-        // CARTA JOGADA PELO HUMANO NA MESA (Tamanho 151x216)
         this.cartaMesa.setBounds(550, 420, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
         this.cartaMesa.setVisible(false);
 
         this.cartaPc = new JLabel();
-        // CARTA DO PC DE CIMA (Tamanho 100x140)
         cartaPc.setIcon(cardCostasPC);
         this.cartaPc.setBounds( 550, 100, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.cartaPc.setVisible(true);
@@ -124,13 +122,11 @@ public class PainelJogo extends JPanel {
         this.add(cartaPc);
 
         this.cardParceiro = new JLabel();
-        // CARTA DO PC PARCEIRO ESQUERDA (Tamanho 100x140)
         cardParceiro.setIcon(cardCostasPC);
         this.cardParceiro.setBounds(250, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.add(cardParceiro);
 
         this.cardPCLateral = new JLabel();
-        // CARTA DO PC OPONENTE DIREITA (Tamanho 100x140)
         cardPCLateral.setIcon(cardCostasPC);
         this.cardPCLateral.setBounds(850, 200, PC_CARD_WIDTH, PC_CARD_HEIGHT);
         this.add(cardPCLateral);
@@ -138,45 +134,52 @@ public class PainelJogo extends JPanel {
 
         // --- LABELS E PLACAR (POSIÇÕES MANTIDAS/AJUSTADAS PARA TELA GRANDE) ---
         lblNomeJogador = new JLabel();
-        lblNomeJogador.setFont(new Font("Showcard Gothic", Font.BOLD, 20));
+        lblNomeJogador.setFont(new Font("Rosewood Std Regular", Font.BOLD, 20));
         lblNomeJogador.setBounds(500, 700, 200, 48);
+        lblNomeJogador.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(lblNomeJogador);
 
         lblNomePCParceiro = new JLabel("Parceiro");
-        lblNomePCParceiro.setFont(new Font("Showcard Gothic", Font.BOLD, 14));
+        lblNomePCParceiro.setFont(new Font("Rosewood Std Regular", Font.BOLD, 14));
         lblNomePCParceiro.setBounds(250, 150, 100, 20);
+        lblNomePCParceiro.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(lblNomePCParceiro);
 
         lblNomePCLateral = new JLabel("Oponente");
-        lblNomePCLateral.setFont(new Font("Showcard Gothic", Font.BOLD, 14));
+        lblNomePCLateral.setFont(new Font("Rosewood Std Regular", Font.BOLD, 14));
         lblNomePCLateral.setBounds(850, 150, 100, 20);
+        lblNomePCLateral.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(lblNomePCLateral);
 
         placar = new JLabel();
         placar.setBounds(30, 13, 300, 40);
         placar.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 42));
+        placar.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(placar);
 
         placarSet = new JLabel("Set: 0 X 0");
         placarSet.setBounds(30, 50, 300, 40);
-        placarSet.setFont(new Font("Showcard Gothic", Font.BOLD, 20));
+        placarSet.setFont(new Font("Rosewood Std Regular", Font.BOLD, 20));
+        placarSet.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(placarSet);
 
         lblPedirTruco = new JLabel("TRUCO");
         lblPedirTruco.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
         lblPedirTruco.setBounds(950, 300, 188, 104);
+        lblPedirTruco.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(lblPedirTruco);
 
         lblModoRoubo = new JLabel("ROUBO");
         lblModoRoubo.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
         lblModoRoubo.setBounds(950, 380, 188, 104);
+        lblModoRoubo.setForeground(Color.WHITE); // Cor do texto alterada para Branco
         this.add(lblModoRoubo);
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Image background = new ImageIcon(getClass().getResource("/resource/img/cenario/fundo-mesa.jpg"))
+        Image background = new ImageIcon(getClass().getResource("/resource/img/cenario/cenario0.png"))
                 .getImage();
         g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
     }
@@ -233,9 +236,7 @@ public class PainelJogo extends JPanel {
         this.add(card);
     }
 
-    /**
-     * Define o ícone da carta do JOGADOR HUMANO, mantendo o tamanho 151x216.
-     */
+
     public void setIconePequeno(JLabel card, String naipe, String valor, int x) {
         System.out.println(naipe + " " + valor + " de " + naipe.toLowerCase() + ".jpg");
 
@@ -249,8 +250,7 @@ public class PainelJogo extends JPanel {
             icone = cardCostasPC;
         }
 
-        // Posição para as cartas do PLAYER
-        card.setBounds(x, 500, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
+        card.setBounds(x, 600, PLAYER_CARD_WIDTH, PLAYER_CARD_HEIGHT);
         card.setIcon(icone);
     }
 
