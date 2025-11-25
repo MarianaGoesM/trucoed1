@@ -29,7 +29,6 @@ public class ControlPartida {
     }
 
     public void fimDeJogo(int vencedor) {
-        // Esta função deve ser implementada na View (JogoPrincipal)
         System.out.println("SINALIZADOR: FIM DE JOGO - Vencedor time " + (vencedor == 1 ? "1" : "2"));
     }
 
@@ -113,24 +112,15 @@ public class ControlPartida {
         return valorManilha.getPesoTruco() * 10 + 4;
     }
 
-    /**
-     * Calcula a força universal da carta (Valor * 10 + Naipe), garantindo que não haja empates de força.
-     */
     public int getForcaTruco(Carta carta, Carta manilhaVirada) {
 
         Valor valorManilha = getValorManilha(manilhaVirada);
 
-        // Se a carta é uma Manilha (vira + 1 no valor do enum Valor)
         if (carta.getValor() == valorManilha) {
-            // Força da Manilha (Base 200 + valor do Naipe)
-            // Isso garante que manilhas são mais fortes que a carta comum mais forte (Max Comum: 10 * 10 + 4 = 104)
             int forcaBase = 200;
             return forcaBase + carta.getNaipe().getValor();
         }
 
-        // Se a carta é comum
-        // Força universal: Peso Truco * 10 + Valor do Naipe
-        // Isso implementa o desempate por naipe para TODAS as cartas comuns.
         return carta.getValor().getPesoTruco() * 10 + carta.getNaipe().getValor();
     }
 
@@ -144,13 +134,11 @@ public class ControlPartida {
         } else if (forcaC1 < forcaC2) {
             return -1;
         } else {
-            // Com a nova lógica em getForcaTruco, o empate (0) só ocorrerá se as cartas forem idênticas.
             return 0;
         }
     }
 
     public boolean IdentificarSeZap(Carta carta, Carta manilha) {
-        // O Zap é o Naipe de valor 4 (ZAP) e Valor é o próximo da Vira
         if (carta.getValor().getValor() == manilha.getValor().getValor() + 1 && carta.getNaipe().getValor() == 4) {
             return true;
         } else {
@@ -175,7 +163,6 @@ public class ControlPartida {
         Carta manilhaVirada = partida.getManilha();
 
         for (Carta carta : pc1.getMao()) {
-            // Verifica se tem uma carta forte (3 ou manilha)
             if (carta.getValor().getPesoTruco() >= Valor.TRES.getPesoTruco()) {
                 return true;
             }
@@ -217,19 +204,15 @@ public class ControlPartida {
         if (empate){
             ct.getTurno().setMelado(true);
 
-            // --- REGISTRO DE EMPATE ---
             GerenciadorTxt.registrarJogada("RESULTADO: EMPATE (Melado).");
-            // --------------------------
 
             return 0;
         }
 
         int vencedorTurno = cartaVencedora.getJogador().getTime() == 1 ? 1 : -1;
 
-        // --- REGISTRO DE VITÓRIA NO TURNO ---
         String nomeVencedor = cartaVencedora.getJogador().getNome();
         GerenciadorTxt.registrarJogada("RESULTADO: Vencedor do turno: " + nomeVencedor + " (Time " + vencedorTurno + ")");
-        // ------------------------------------
 
         return pontuarMao(vencedorTurno);
     }
@@ -282,16 +265,13 @@ public class ControlPartida {
             return;
         }
 
-        // Registra a jogada de cada jogador
         for (CartaJogada cj : cartasJogadas) {
-            // Formata a mensagem de forma clara
             String linhaLog = String.format("JOGADA: Jogador %s (Time %d) jogou: %s de %s",
                     cj.getJogador().getNome(),
                     cj.getJogador().getTime(),
                     cj.getCarta().getValor().toString(),
                     cj.getCarta().getNaipe().toString()
             );
-            // Chama a classe estática para escrever no arquivo
             GerenciadorTxt.registrarJogada(linhaLog);
         }
     }

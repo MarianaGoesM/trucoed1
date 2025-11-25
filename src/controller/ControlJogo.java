@@ -47,7 +47,7 @@ public class ControlJogo {
 
     public void setCp(ControlPartida cp) {
         this.cp = cp;
-        this.indiceJogadorMao = 0; // Jogador Humano (índice 0) começa a primeira Mão/Rodada
+        this.indiceJogadorMao = 0;
     }
 
     public void setPontosSetTime1(int pontosSetTime1) {
@@ -130,7 +130,7 @@ public class ControlJogo {
 
         this.pontosSetTime1 = 0;
         this.pontosSetTime2 = 0;
-        this.indiceJogadorMao = 0; // Inicia com o Humano (índice 0)
+        this.indiceJogadorMao = 0;
 
         GerenciadorTxt.iniciarNovoLog();
     }
@@ -203,14 +203,14 @@ public class ControlJogo {
     }
 
 
-    public void pedirTruco() {
+    public String pedirTruco() {
 
         if (this.valorAtualMao == 3) {
             int novoValor = 6;
             this.valorAtualMao = novoValor;
             this.trucoPendente = true;
             System.out.println("Jogador: PEÇO SEIS! PC deve responder.");
-            return;
+            return "PENDENTE: Oponente pediu Seis.";
         }
 
         if (this.valorAtualMao == 1) {
@@ -221,26 +221,28 @@ public class ControlJogo {
             if (pcChamouTruco) {
                 this.trucoPendente = true;
                 System.out.println("PC: TRUCO! Jogador deve responder.");
-                return;
+                return "PENDENTE: Oponente pediu Truco.";
             } else {
                 if (cp.pcTemZap()) {
                     this.valorAtualMao = 6;
                     this.trucoPendente = true;
                     System.out.println("PC: ACEITO (3) e peço SEIS! Jogador deve responder.");
-                    return;
+                    return "PC Aceitou e Aumentou para SEIS!";
                 }
                 else if (cp.pcTemCartaForte()) {
+                    this.trucoPendente = false;
                     System.out.println("PC: ACEITO (3).");
+                    return "PC Aceitou o Truco (Mão vale 3).";
                 }
                 else {
+                    this.trucoPendente = false;
                     System.out.println("PC: CORRO! Time do jogador ganha 1 ponto.");
                     atualizarPlacarSet(1, 1);
-                    return;
+                    return "PC Correu (Time 1 ganhou 1 ponto).";
                 }
             }
-
-            System.out.println("Mão agora vale: " + this.valorAtualMao);
         }
+        return "Nenhuma ação.";
     }
 
     public int getValorAtualMao() {

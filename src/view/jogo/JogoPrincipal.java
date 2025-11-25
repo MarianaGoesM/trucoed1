@@ -42,11 +42,16 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     }
 
     public void addCardMouseListener() {
+        addCardListenersForPlay();
+
+        this.painel.getLblModoRoubo().addMouseListener(this);
+        this.painel.getLblPedirTruco().addMouseListener(this);
+    }
+
+    public void addCardListenersForPlay() {
         this.painel.getCard1().addMouseListener(this);
         this.painel.getCard2().addMouseListener(this);
         this.painel.getCard3().addMouseListener(this);
-        this.painel.getLblModoRoubo().addMouseListener(this);
-        this.painel.getLblPedirTruco().addMouseListener(this);
     }
 
     public void inicioPartida() {
@@ -104,7 +109,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
             cj.setPontosSetTime1(0);
             cj.setPontosSetTime2(0);
 
-            // Reseta a mão
             cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);
 
             SwingUtilities.invokeLater(() -> {
@@ -154,7 +158,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
         int indiceInicial = cj.getIndiceJogadorMao();
 
-        //fila encadeada circular
         int proximoAJogarIndex = indiceInicial;
         for (int i = 0; i < cartasJogadasNoTurno; i++) {
             proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
@@ -207,6 +210,17 @@ public class JogoPrincipal extends JFrame implements MouseListener {
         }
     }
 
+    private int getProximoAJogarIndex() {
+        int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
+        int indiceInicial = cj.getIndiceJogadorMao();
+
+        int proximoAJogarIndex = indiceInicial;
+        for (int i = 0; i < cartasJogadasNoTurno; i++) {
+            proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
+        }
+        return proximoAJogarIndex;
+    }
+
     private void executarRespostaTruco() {
         int valorAtual = cj.getValorAtualMao();
         String mensagem = "Seu oponente pediu " + (valorAtual == 3 ? "TRUCO" : valorAtual) + ". Deseja aceitar?";
@@ -223,9 +237,25 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
         if (n == JOptionPane.YES_OPTION) {
             cj.aceitarTruco();
-            iniciarFluxoPC();
+
+            removerCardMouseListener();
+
+            // Exibir a notificação de aceite
+            JOptionPane.showMessageDialog(this,
+                    "Você aceitou a aposta. A mão agora vale " + cj.getValorAtualMao() + ".",
+                    "Truco Aceito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            int proximoAJogarIndex = getProximoAJogarIndex();
+
+            // Reforça a reativação dos listeners completos, pois o jogador pode querer aumentar para 6/9
+            if (proximoAJogarIndex == 0) {
+                addCardMouseListener();
+            } else {
+                iniciarFluxoPC();
+            }
+
         } else {
-            // O jogador (Time 1) correu. Time 2 ganha a pontuação anterior.
             cj.correrTruco(1);
             SwingUtilities.invokeLater(() -> {
                 painel.limparMesa();
@@ -233,9 +263,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                 inicioPartida();
             });
         }
-
-        removerCardMouseListener();
-        addCardMouseListener();
     }
 
 
@@ -261,13 +288,17 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     private void executarPedirTruco() {
         removerCardMouseListener();
 
-        cj.pedirTruco();
+        String resultadoTruco = cj.pedirTruco();
 
         if (cj.isTrucoPendente()) {
-            // Se Truco/Seis for pendente (PC pediu aumento ou Truco), mostra o pop-up
             executarRespostaTruco();
         } else {
-            // Se o PC aceitou (valorAtualMao=3) ou correu (valorAtualMao=1)
+            // Exibir a resposta do PC (aceitou ou correu)
+            JOptionPane.showMessageDialog(this,
+                    resultadoTruco,
+                    "Resposta do Oponente",
+                    JOptionPane.INFORMATION_MESSAGE);
+
             if (cj.getValorAtualMao() == 1) {
                 SwingUtilities.invokeLater(() -> {
                     painel.limparMesa();
@@ -275,8 +306,8 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                     inicioPartida();
                 });
             } else {
-                // PC aceitou o Truco (valorAtualMao=3). O jogo continua normalmente.
-                SwingUtilities.invokeLater(() -> addCardMouseListener());
+                // PC aceitou. Humano tem que jogar a carta.
+                SwingUtilities.invokeLater(() -> addCardListenersForPlay());
             }
         }
     }
@@ -303,7 +334,11 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                 for (int count = 0; count < jogadasRestantes; count++) {
 
                     if (proximoAJogarIndex == 0) {
-                        SwingUtilities.invokeLater(() -> addCardMouseListener());
+                        if (cj.getValorAtualMao() > 1) {
+                            SwingUtilities.invokeLater(() -> addCardListenersForPlay());
+                        } else {
+                            SwingUtilities.invokeLater(() -> addCardMouseListener());
+                        }
                         break;
                     }
 
@@ -379,7 +414,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                         } else if (cj.getPontosSetTime2() >= 12) {
                             fimDeJogo(-1);
                         } else {
-                            // Se não for Fim de Jogo, reinicia a rodada
                             cp.aplicarDelay(3);
                             painel.limparMesa();
                             cj.setIndiceJogadorMao((cj.getIndiceJogadorMao() + 1) % 4);

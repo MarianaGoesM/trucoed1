@@ -57,7 +57,6 @@ public class PainelJogo extends JPanel {
     protected ImageIcon cardCostasManilha;
     protected ImageIcon cardCostasPC;
 
-    // --- MÉTODO AUXILIAR PARA REDIMENSIONAMENTO E TRATAMENTO DE ERRO (NPE) ---
     private ImageIcon createResizedIcon(String path, int width, int height) {
         URL location = this.getClass().getResource(path);
 
@@ -85,8 +84,8 @@ public class PainelJogo extends JPanel {
 
     public PainelJogo() {
         // Carrega os ícones de costas para PC e Manilha nos novos tamanhos
-        this.cardCostasPC = createResizedIcon("/resource/img/cenario/carta-costas.png", PC_CARD_WIDTH, PC_CARD_HEIGHT);
-        this.cardCostasManilha = createResizedIcon("/resource/img/cenario/carta-costas.png", MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
+        this.cardCostasPC = createResizedIcon("/resource/img/cenario/carta-costas.jpg", PC_CARD_WIDTH, PC_CARD_HEIGHT);
+        this.cardCostasManilha = createResizedIcon("/resource/img/cenario/carta-costas.jpg", MANILHA_CARD_WIDTH, MANILHA_CARD_HEIGHT);
 
         // Fallback simples para evitar NPE se o recurso falhar
         if (this.cardCostasPC == null) {
@@ -177,7 +176,7 @@ public class PainelJogo extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Image background = new ImageIcon(getClass().getResource("/resource/img/cenario/fundo-mesa-menor.jpg"))
+        Image background = new ImageIcon(getClass().getResource("/resource/img/cenario/fundo-mesa.jpg"))
                 .getImage();
         g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
     }
