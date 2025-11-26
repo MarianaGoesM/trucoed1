@@ -34,13 +34,11 @@ public enum Valor {
     public Valor getProximoValor() {
         Valor[] valores = Valor.values();
 
-        // verifica se o valor atual é o último da lista de enums (o 3)
         if (this.ordinal() == valores.length - 1) {
-            // se for o 3, o próximo é o primeiro valor (o 4).
+
             return valores[0];
         }
 
-        // senao, retorna o próximo valor na ordem de declaração (que segue a ordem de força)
         return valores[this.ordinal() + 1];
     }
 }

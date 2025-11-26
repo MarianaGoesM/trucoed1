@@ -1,13 +1,13 @@
 package model;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Collections;
 import enumerated.Naipe;
 import enumerated.Valor;
 
 
 public class Ordenacao implements Comparator<Carta> {
-
-    // A carta "vira" da rodada é essencial para determinar a força das manilhas.
     private final Carta vira;
 
     public Ordenacao(Carta vira) {
@@ -15,36 +15,52 @@ public class Ordenacao implements Comparator<Carta> {
     }
 
     private Valor getValorManilha(Valor viraValor) {
-        // Assume que o método getProximoValor() existe na enum Valor.
         return viraValor.getProximoValor();
     }
 
 
+    public static void bubbleSort(List<Carta> cartas, Ordenacao instanciaOrdenacao) {
+        int n = cartas.size();
+        boolean trocou;
+
+        for (int i = 0; i < n - 1; i++) {
+            trocou = false;
+
+            for (int j = 0; j < n - 1 - i; j++) {
+
+                int power1 = instanciaOrdenacao.getCardTrucoPower(cartas.get(j));
+                int power2 = instanciaOrdenacao.getCardTrucoPower(cartas.get(j + 1));
+
+                if (power1 > power2) {
+
+                    Collections.swap(cartas, j, j + 1);
+                    trocou = true;
+                }
+            }
+
+            if (!trocou) {
+                break;
+            }
+        }
+    }
+
     private int getCardTrucoPower(Carta c) {
 
-        // 1. Força Padrão (Base: 1 a 10)
-        // Usa o pesoTruco definido no enum Valor (QUATRO=1, ..., TRES=10).
         int power = c.getValor().getPesoTruco();
 
-        // 2. Lógica para definir a MANILHA (Manilha é sempre mais forte que qualquer carta base)
         if (vira != null) {
 
-            // Determina qual é o valor que se tornou manilha (ex: se Vira=7, Manilha=Q)
             Valor valorManilha = getValorManilha(this.vira.getValor());
 
             if (c.getValor() == valorManilha) {
-
-                // Se for Manilha, ganha um bônus alto (1000) para garantir que seja a mais forte.
                 power += 1000;
-
-
-                if (c.getNaipe() == Naipe.ZAP) { // Manilha ZAP (correspondente ao Paus/Clubs no truco)
+                if (c.getNaipe() == Naipe.ZAP) {
                     power += 4;
-                } else if (c.getNaipe() == Naipe.ESPADILHA) { // Manilha ESPADILHA (correspondente ao Espadas/Spades)
+                } else if (c.getNaipe() == Naipe.ESPADILHA) {
                     power += 3;
-                } else if (c.getNaipe() == Naipe.COPAS) { // Manilha COPAS
+                } else if (c.getNaipe() == Naipe.COPAS) {
                     power += 2;
-                } else if (c.getNaipe() == Naipe.OURO) { // Manilha PICAFUMO (correspondente ao Ouros/Diamonds)
+                } else if (c.getNaipe() == Naipe.OURO) {
                     power += 1;
                 }
             }

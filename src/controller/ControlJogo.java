@@ -101,17 +101,27 @@ public class ControlJogo {
         if (numerojogadores != 4) return;
 
         Jogador<Carta> p1 = setarJogador(true, nomePessoa, 1);
+        Jogador<Carta> pc1 = setarJogador(false, "PC1", 2);
+        Jogador<Carta> pc2 = setarJogador(false, "PC2", 1);
+        Jogador<Carta> pc3 = setarJogador(false, "PC3", 2);
+
         if (p1 != null) this.jogo.addJogador(p1);
-        System.out.println("criei: " + p1.getNome());
-
-        Jogador<Carta> pc1 = setarJogador(false, "", 2);
         if (pc1 != null) this.jogo.addJogador(pc1);
+        if (pc2 != null) this.jogo.addJogador(pc2);
+        if (pc3 != null) this.jogo.addJogador(pc3);
 
-        Jogador<Carta> pc2 = setarJogador(false, "", 1);
-        if (pc2 != null)this.jogo.addJogador(pc2);
 
-        Jogador<Carta> pc3 = setarJogador(false, "", 2);
-        if (pc3 != null)this.jogo.addJogador(pc3);
+        // P1 (Jogador Humano) aponta para PC3
+        p1.setProximoJogador(pc3);
+
+        // PC3 aponta para PC2
+        pc3.setProximoJogador(pc2);
+
+        // PC2 aponta para PC1
+        pc2.setProximoJogador(pc1);
+
+        // PC1 (último) aponta para P1
+        pc1.setProximoJogador(p1);
 
         System.out.println("Jogadores jogados com sucesso!" + this.jogo.getJogadores().size());
     }
@@ -128,13 +138,14 @@ public class ControlJogo {
         this.trucoPendente = false;
 
 
-        this.pontosSetTime1 = 0;
+        this.pontosSetTime1 = 10;
         this.pontosSetTime2 = 0;
         this.indiceJogadorMao = 0;
 
         GerenciadorTxt.iniciarNovoLog();
     }
 
+    //METODO DE BUSCA
     public boolean aplicarModoRoubo() {
         if (this.modoRouboUsado) {
             System.out.println("Modo Roubo: Já foi usado nesta partida.");
@@ -165,6 +176,7 @@ public class ControlJogo {
 
         int forcaMinHumano = cp.getForcaTruco(cartaMaisFracaHumano, manilhaVirada);
 
+        //BUSCA LINEAR
         for (int i = 1; i < cartasNoBaralho.size(); i++) {
             Carta cartaAtual = cartasNoBaralho.get(i);
             int forcaAtual = cp.getForcaTruco(cartaAtual, manilhaVirada);
@@ -350,6 +362,17 @@ public class ControlJogo {
     public int getPontosSetTime1() { return pontosSetTime1; }
     public int getPontosSetTime2() { return pontosSetTime2; }
 
+    public Jogador<Carta> getJogadorMao() {
+        if (this.jogo == null || this.jogo.getJogadores() == null || this.jogo.getJogadores().isEmpty()) {
+            return null;
+        }
+        List<Jogador<Carta>> jogadores = this.jogo.getJogadores();
+
+        if (this.indiceJogadorMao >= 0 && this.indiceJogadorMao < jogadores.size()) {
+            return jogadores.get(this.indiceJogadorMao);
+        }
+        return null;
+    }
 
     public boolean isModoRouboUsado() {
         return modoRouboUsado;

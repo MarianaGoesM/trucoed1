@@ -196,7 +196,7 @@ public class PainelJogo extends JPanel {
 
         lblOrdenarCartas = new JLabel("↑");
         lblOrdenarCartas.setFont(new Font("Rosewood Std Regular", Font.PLAIN, 50));
-        lblOrdenarCartas.setBounds(257, 647, 188, 104);
+        lblOrdenarCartas.setBounds(257, 647, 70, 104);
         lblOrdenarCartas.setForeground(Color.WHITE);
         this.add(lblOrdenarCartas);
     }

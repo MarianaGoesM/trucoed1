@@ -342,27 +342,26 @@ public class JogoPrincipal extends JFrame implements MouseListener {
     }
 
 
+    //LISTA ENCADEADA
     private void iniciarFluxoPC() {
         new Thread(() -> {
             try {
                 if (cj.isTrucoPendente()) return;
 
-                List<Jogador<Carta>> jogadores = cj.getJogo().getJogadores();
+                Jogador<Carta> jogadorHumano = cj.getJogadorHumano();
+                Jogador<Carta> jogadorAtual = cj.getJogadorMao();
 
                 int cartasJogadas = ct.getTurno().getCartasJogadas().size();
-                int indiceInicial = cj.getIndiceJogadorMao();
-
-                int proximoAJogarIndex = indiceInicial;
 
                 for (int i = 0; i < cartasJogadas; i++) {
-                    proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
+                    jogadorAtual = jogadorAtual.getProximoJogador();
                 }
 
                 int jogadasRestantes = 4 - cartasJogadas;
 
                 for (int count = 0; count < jogadasRestantes; count++) {
 
-                    if (proximoAJogarIndex == 0) {
+                    if (jogadorAtual == jogadorHumano) {
                         if (cj.getValorAtualMao() > 1) {
                             SwingUtilities.invokeLater(() -> addCardListenersForPlay());
                         } else {
@@ -371,7 +370,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                         break;
                     }
 
-                    Jogador<Carta> jogadorPC = jogadores.get(proximoAJogarIndex);
+                    Jogador<Carta> jogadorPC = jogadorAtual;
 
                     cp.aplicarDelay(1);
 
@@ -382,7 +381,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                         return;
                     }
 
-                    proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
+                    jogadorAtual = jogadorAtual.getProximoJogador();
                 }
 
                 if (ct.getTurno().getCartasJogadas().size() == 4) {

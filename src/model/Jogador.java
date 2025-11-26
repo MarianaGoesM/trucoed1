@@ -13,6 +13,8 @@ public abstract class Jogador<T> {
     private T cartaJogada;
     private int time;
 
+    private Jogador<T> proximoJogador;
+
     public Jogador(String nome, int time) {
         this.nome = nome;
         this.mao = new ArrayList<T>();
@@ -42,6 +44,14 @@ public abstract class Jogador<T> {
         this.mao = mao;
     }
 
+    public Jogador<T> getProximoJogador() {
+        return this.proximoJogador;
+    }
+
+    public void setProximoJogador(Jogador<T> proximoJogador) {
+        this.proximoJogador = proximoJogador;
+    }
+
 
     public int getTime() {
         return time;
@@ -54,14 +64,11 @@ public abstract class Jogador<T> {
     public void ordenarMao(Carta vira) {
         if (!this.mao.isEmpty() && this.mao.get(0) instanceof Carta) {
 
-            // 1. Cria a classe de Ordenacao, passando a "vira" da rodada
             Ordenacao comparator = new Ordenacao(vira);
 
-            // 2. Ordena a lista de cartas
-            @SuppressWarnings("unchecked")
             List<Carta> cartas = (List<Carta>) this.mao;
 
-            cartas.sort(comparator);
+            Ordenacao.bubbleSort(cartas, comparator);
         } else {
             System.err.println("Erro: A mão do jogador não pode ser ordenada.");
         }
