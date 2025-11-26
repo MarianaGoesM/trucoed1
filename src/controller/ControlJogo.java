@@ -305,6 +305,16 @@ public class ControlJogo {
         }
     }
 
+    public boolean ordenarMaoDoJogadorAtual(Carta manilha) {
+        Jogador<Carta> jogadorAtual = getJogadorHumano();
+
+        if (jogadorAtual != null && manilha != null) {
+            jogadorAtual.ordenarMao(manilha);
+            return true;
+        }
+        return false;
+    }
+
     public int getIndiceJogadorMao() { return indiceJogadorMao; }
 
     public Jogador<Carta> getJogadorHumano(){

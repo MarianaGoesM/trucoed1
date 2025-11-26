@@ -46,6 +46,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
         this.painel.getLblModoRoubo().addMouseListener(this);
         this.painel.getLblPedirTruco().addMouseListener(this);
+        this.painel.getLblOrdenarCartas().addMouseListener(this);
     }
 
     public void addCardListenersForPlay() {
@@ -136,7 +137,6 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
         if (cj.isTrucoPendente()) {
             if (e.getComponent() == this.painel.getLblPedirTruco()) {
                 executarRespostaTruco();
@@ -144,25 +144,48 @@ public class JogoPrincipal extends JFrame implements MouseListener {
             return;
         }
 
+        // --- Lógica de Ordenação ---
+        if (e.getComponent() == this.painel.getLblOrdenarCartas()) {
+            // Chama a lógica de ordenação no ControlJogo
+            boolean ordenou = cj.ordenarMaoDoJogadorAtual(cp.getPartida().getManilha());
+
+            if (ordenou) {
+                // Atualiza a exibição da mão do jogador
+                SwingUtilities.invokeLater(() -> {
+                    Jogador<Carta> jHumano = cj.getJogadorHumano();
+                    if (jHumano != null) {
+                        painel.atualizarMaoHumano(jHumano.getMao());
+                    }
+                });
+            }
+            // Retorna após a ordenação
+            return;
+        }
+
+        // --- Lógica de Modo Roubo ---
         if (e.getComponent() == this.painel.getLblModoRoubo()) {
             executarModoRoubo();
             return;
         }
 
+        // --- Lógica de Pedir Truco / Aumentar Aposta ---
         if (e.getComponent() == this.painel.getLblPedirTruco()) {
             executarPedirTruco();
             return;
         }
 
 
+        // --- Lógica de Jogada de Carta (apenas se for a vez do humano) ---
         int cartasJogadasNoTurno = ct.getTurno().getCartasJogadas().size();
         int indiceInicial = cj.getIndiceJogadorMao();
 
+        // Determina quem é o próximo a jogar
         int proximoAJogarIndex = indiceInicial;
         for (int i = 0; i < cartasJogadasNoTurno; i++) {
             proximoAJogarIndex = (proximoAJogarIndex - 1 + 4) % 4;
         }
 
+        // Se o próximo a jogar não for o jogador humano (índice 0), ignora o clique da carta
         if (proximoAJogarIndex != 0) return;
 
 
@@ -185,6 +208,7 @@ public class JogoPrincipal extends JFrame implements MouseListener {
 
         if (card != null) {
             Carta cartaParaRemover = null;
+            // Encontra o objeto Carta correspondente ao JLabel clicado
             for (Carta carta : cartasHumano) {
                 if (card.getName().contains(carta.getNaipe().toString().toLowerCase())
                         && card.getName().contains(carta.getValor().toString().toLowerCase())) {
@@ -193,19 +217,24 @@ public class JogoPrincipal extends JFrame implements MouseListener {
                     break;
                 }
             }
+            // Remove a carta da mão do jogador
             if (cartaParaRemover != null) {
                 cartasHumano.remove(cartaParaRemover);
             }
         }
 
         if (cartaJogadaJogador != null) {
+            // Remove listeners para prevenir cliques extras
             removerCardMouseListener();
 
+            // Move e vira a carta na mesa
             this.painel.moverCardParaMesa(card, cartaJogadaJogador.getNaipe().toString().toLowerCase(),
                     cartaJogadaJogador.getValor().toString().toLowerCase());
 
+            // Registra a jogada no turno
             ct.novaCartaJogada(jogadorHumano, cartaJogadaJogador);
 
+            // Inicia o fluxo dos PCs
             iniciarFluxoPC();
         }
     }

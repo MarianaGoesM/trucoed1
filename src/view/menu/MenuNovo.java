@@ -39,9 +39,6 @@ public class MenuNovo extends JDialog implements ActionListener {
 		contentPane.add(nomeJogador);
 		nomeJogador.setColumns(10);
 
-		chckbxBaralhoLimpo = new JCheckBox("Baralho limpo?");
-		chckbxBaralhoLimpo.setBounds(8, 54, 113, 25);
-		contentPane.add(chckbxBaralhoLimpo);
 
 		JButton btnJogar = new JButton("Jogar");
 		btnJogar.addActionListener(this);
@@ -62,10 +59,7 @@ public class MenuNovo extends JDialog implements ActionListener {
 		return tipoBaralho;
 	}
 
-	// se true � sujo, se false � limpo
-	public void setTipoBaralho(JCheckBox chckbx) {
-		this.tipoBaralho = !chckbx.isSelected();
-	}
+
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
@@ -73,7 +67,6 @@ public class MenuNovo extends JDialog implements ActionListener {
 		
 		JogoPrincipal jogo = new JogoPrincipal(nomeJogador.getText(), isTipoBaralho(), 4);
 		jogo.setVisible(true);
-		setTipoBaralho(chckbxBaralhoLimpo);
 		setNomeDoJogador(nomeJogador);
 		jogo.getPainel().getNomeJogador();;
 		jogo.getPainel().getPlacar().setText("Placar: "  + getNomeDoJogador() + " 0 X 0 PC");

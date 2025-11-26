@@ -1,7 +1,9 @@
 package view.menu;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.*;
+import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -10,88 +12,74 @@ import javax.swing.border.EmptyBorder;
 
 public class PainelMenu extends JPanel{
 
-	private JLabel novo;
-	private JLabel placar;
-	private ImageIcon novoIcon = new ImageIcon(this.getClass().getResource("/resource/img/cenario/novo1.jpg"));
-	private ImageIcon novoHoverIcon = new ImageIcon(this.getClass().getResource("/resource/img/cenario/novo.jpg"));
-	private ImageIcon placarIcon = new ImageIcon(this.getClass().getResource("/resource/img/cenario/placar1.jpg"));
-	private ImageIcon placarHoverIcon = new ImageIcon(this.getClass().getResource("/resource/img/cenario/placar.jpg"));
+    private JLabel novo;
+    private JLabel placar;
+    private Font fontePrincipal;
 
-	public PainelMenu() {
-		this.setBorder(new EmptyBorder(5, 5, 5, 5));
-		this.setLayout(null);
-		this.criarMenu(); 
-		this.setName("Truco");
-	}
+    private Font loadCustomFont(String fontFileName, int style, float size) {
+        try {
+            String path = "/resource/fonts/" + fontFileName;
+            InputStream is = this.getClass().getResourceAsStream(path);
 
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+            if (is == null) {
+                System.err.println("ERRO: Arquivo de fonte não encontrado: " + path);
+                return new Font("Arial", style, (int) size);
+            }
 
-		Image background = new ImageIcon(this.getClass().getResource("/resource/img/cenario/mesa-3.2.png")).getImage();
-		g.drawImage(background, 0, 0, this);
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, is);
+            return customFont.deriveFont(style, size);
 
-	}
+        } catch (IOException | FontFormatException e) {
+            System.err.println("Erro ao carregar ou formatar a fonte " + fontFileName);
+            e.printStackTrace();
+            return new Font("Arial", style, (int) size);
+        }
+    }
 
-	public void criarMenu() {
+    public PainelMenu() {
+        this.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.setLayout(null);
 
-		this.novo = new JLabel();
-		this.novo.setIcon(novoIcon);
-		this.novo.setName("novo");
-		this.add(novo);
-		this.novo.setBounds(177, 116, 131, 46);
+        this.fontePrincipal = loadCustomFont("Milkyway DEMO.ttf", Font.BOLD, 12f);
 
-		this.placar = new JLabel();
-		this.placar.setIcon(placarIcon);
-		this.placar.setName("placar");
-		this.add(placar);
-		this.placar.setBounds(177, 186, 139, 52);
-	}
-	
-	public JLabel getNovo() {
-		return novo;
-	}
+        this.criarMenu();
 
-	public void setNovo(JLabel novo) {
-		this.novo = novo;
-	}
 
-	public JLabel getPlacar() {
-		return placar;
-	}
+        this.setName("Truco");
+    }
 
-	public void setPlacar(JLabel placar) {
-		this.placar = placar;
-	}
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-	public ImageIcon getNovoIcon() {
-		return novoIcon;
-	}
+        Image background = new ImageIcon(this.getClass().getResource("/resource/img/cenario/telaInicial.jpg")).getImage();
+        g.drawImage(background, 0, 0, this);
 
-	public void setNovoIcon(ImageIcon novoIcon) {
-		this.novoIcon = novoIcon;
-	}
+    }
 
-	public ImageIcon getNovoHoverIcon() {
-		return novoHoverIcon;
-	}
+    public void criarMenu() {
 
-	public void setNovoHoverIcon(ImageIcon novoHoverIcon) {
-		this.novoHoverIcon = novoHoverIcon;
-	}
+        this.novo = new JLabel("Novo Jogo");
+        this.novo.setName("novo");
+        this.novo.setFont(fontePrincipal.deriveFont(Font.PLAIN, 30f));
+        this.novo.setForeground(Color.PINK);
+        this.add(novo);
+        this.novo.setBounds(440, 435, 140, 46);
 
-	public ImageIcon getPlacarIcon() {
-		return placarIcon;
-	}
+    }
 
-	public void setPlacarIcon(ImageIcon placarIcon) {
-		this.placarIcon = placarIcon;
-	}
+    public JLabel getNovo() {
+        return novo;
+    }
 
-	public ImageIcon getPlacarHoverIcon() {
-		return placarHoverIcon;
-	}
+    public void setNovo(JLabel novo) {
+        this.novo = novo;
+    }
 
-	public void setPlacarHoverIcon(ImageIcon placarHoverIcon) {
-		this.placarHoverIcon = placarHoverIcon;
-	}
+    public JLabel getPlacar() {
+        return placar;
+    }
+
+    public void setPlacar(JLabel placar) {
+        this.placar = placar;
+    }
 }

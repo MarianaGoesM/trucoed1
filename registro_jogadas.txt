@@ -1,1 +1,3 @@
---- NOVO JOGO INICIADO: 2025-11-25T17:44:40.179476858 ---
+--- NOVO JOGO INICIADO: 2025-11-25T21:01:42.513047915 ---
+JOGADA: Jogador dfgdgdgdgfhg (Time 1) jogou: J de ESPADILHA
+JOGADA: Jogador Computador2 (Time 2) jogou: DOIS de OURO
